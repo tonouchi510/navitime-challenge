@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "816737725072",
+    "firebase_url": "https://navitime-challenge.firebaseio.com",
+    "project_id": "navitime-challenge",
+    "storage_bucket": "navitime-challenge.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:816737725072:android:22f0773ab3da235d6d4615",
+        "android_client_info": {
+          "package_name": "com.example.navitime_challenge"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "816737725072-d5trujb252re7i0grn09jagrbq174425.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1pJdyw8bc0nxNzXX6vBab4Yo3uri_hT0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "816737725072-d5trujb252re7i0grn09jagrbq174425.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
