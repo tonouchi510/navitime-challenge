@@ -2,6 +2,8 @@
 
 ハッカソンアプリ案：「スキマ時間の宅配シフト提案アプリ（仮）」
 
+開発スケジュール：[スプレッドシートの開発計画](https://docs.google.com/spreadsheets/u/1/d/1JADgCvRZBICOabYKJMkdCKYy0vVKmNjFMdeH54cQFNw/edit?usp=drive_web&ouid=115497469233801365613)
+
 ## アプリの機能  
 - ユーザのスキマ時間に可能なシフトを提案する
   - Google Map/Calenderと連携して、"ユーザの現在地"と"注文状況（店・配達先の位置情報）"から、スキマ時間で最大利益を生むシフトを組む
