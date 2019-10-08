@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">navitime-challenge</string>
+
+    <string name="tab1_label">home</string>
+    <string name="tab2_label">orderList</string>
+    <string name="tab3_label">orderMap</string>
 </resources>
