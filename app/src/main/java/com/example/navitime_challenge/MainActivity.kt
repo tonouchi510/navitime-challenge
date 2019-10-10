@@ -2,6 +2,7 @@ package com.example.navitime_challenge
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.navitime_challenge.adapter.TabAdapter
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -15,7 +16,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
-        pager.adapter = TabAdapter(supportFragmentManager,this)
+        pager.adapter =
+            TabAdapter(supportFragmentManager, this)
         tabLayout.setupWithViewPager(pager)
     }
 }
