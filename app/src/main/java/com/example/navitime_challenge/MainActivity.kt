@@ -2,48 +2,41 @@ package com.example.navitime_challenge
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import com.example.navitime_challenge.adapter.TabAdapter
+import androidx.viewpager.widget.ViewPager
+import com.example.navitime_challenge.adapter.ViewPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
-    private val LIMIT = 50
 
-    private var mFirestore: FirebaseFirestore? = null
-    private var mQuery: Query? = null
+    private lateinit var tabLayout: TabLayout
+    private lateinit var viewPager: ViewPager
+    private lateinit var adapter: ViewPagerAdapter
+
+    lateinit var mFirestore: FirebaseFirestore
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val tabLayout: TabLayout = findViewById(R.id.tab_layout)
-        pager.adapter =
-            TabAdapter(supportFragmentManager, this)
-        tabLayout.setupWithViewPager(pager)
-
-        initFirestore()
-    }
-
-    private fun initFirestore() {
+        // Firestore
+        FirebaseFirestore.setLoggingEnabled(true)
         mFirestore = FirebaseFirestore.getInstance()
 
-        // Get the 50 highest rated restaurants
-        val docRef = mFirestore!!.collection("orders").document("7V99VLl0mJisOBucdCVS")
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                } else {
-                    Log.d(TAG, "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
-            }
+        tabLayout = findViewById(R.id.tab_layout)
+        viewPager = findViewById(R.id.pager)
+        adapter = ViewPagerAdapter(supportFragmentManager, this)
+
+        // Add fragments
+        adapter.addFragment(FragmentTab01(), "Home")
+        adapter.addFragment(FragmentTab02(), "OrderList")
+        adapter.addFragment(FragmentTab03(), "OrderMap")
+
+        viewPager.adapter = adapter
+        tabLayout.setupWithViewPager(pager)
     }
 }
