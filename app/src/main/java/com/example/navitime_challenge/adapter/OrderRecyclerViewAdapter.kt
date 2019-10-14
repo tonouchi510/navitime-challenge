@@ -38,7 +38,6 @@ open class OrderRecyclerViewAdapter(query: Query) :
 
             itemView.shop.text = order.shop!!.name
             itemView.order_time.text = order.created_at!!.toDate().toString()
-            itemView.order_status.text = order.status.toString()
             itemView.time_required.text = "15分"
         }
     }
