@@ -30,6 +30,12 @@
             android:textSize="10sp"
             android:text="00" />
 
+        <WebView
+            android:id="@+id/map_webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
     </LinearLayout>
+
 
 </FrameLayout>
