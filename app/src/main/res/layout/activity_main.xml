@@ -1,38 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+<layout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/pager"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <com.google.android.material.tabs.TabItem
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/tab1_label"/>
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/tab2_label"/>
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/tab3_label"/>
+                android:layout_height="wrap_content">
 
-        </com.google.android.material.tabs.TabLayout>
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tab1_label"/>
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tab2_label"/>
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tab3_label"/>
 
-    </androidx.viewpager.widget.ViewPager>
+            </com.google.android.material.tabs.TabLayout>
 
-</LinearLayout>
+        </androidx.viewpager.widget.ViewPager>
+
+    </LinearLayout>
+
+</layout>
