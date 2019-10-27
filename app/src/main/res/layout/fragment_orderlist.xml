@@ -8,7 +8,7 @@
         android:layout_gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".FragmentTab02">
+        tools:context=".ui.FragmentOrderList">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/order_recyclerview"
