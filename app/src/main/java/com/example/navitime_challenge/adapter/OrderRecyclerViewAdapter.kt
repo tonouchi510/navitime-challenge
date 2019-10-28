@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.example.navitime_challenge.R
-import com.example.navitime_challenge.model.Order
+import com.example.navitime_challenge.domain.Order
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 
@@ -34,7 +34,6 @@ open class OrderRecyclerViewAdapter(query: Query) :
 
             val order = snapshot.toObject(Order::class.java) ?: return
             order.id = snapshot.id
-            Log.w(TAG, order.toString())
 
             itemView.shop.text = order.shop!!.name
             itemView.order_time.text = order.created_at!!.toDate().toString()
