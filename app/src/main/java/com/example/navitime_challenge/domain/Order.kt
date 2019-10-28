@@ -1,4 +1,4 @@
-package com.example.navitime_challenge.model
+package com.example.navitime_challenge.domain
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.IgnoreExtraProperties
