@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <data>
+        <variable
+            name="shop"
+            type="String" />
+
+        <variable
+            name="orderTime"
+            type="String" />
+
+        <variable
+            name="timeRequired"
+            type="String" />
+    </data>
+
 
     <androidx.cardview.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         app:cardUseCompatPadding="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:textSize="18sp"
-                    android:text="マクドナルド" />
+                    android:text="@{shop}" />
 
                 <TextView
                     android:id="@+id/order_time"
@@ -35,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:textSize="10sp"
-                    android:text="15分前" />
+                    android:text="@{orderTime}" />
 
             </LinearLayout>
 
@@ -46,7 +61,7 @@
                 android:layout_height="56dp"
                 android:layout_gravity="center"
                 android:textSize="18sp"
-                android:text="15分" />
+                android:text="@{timeRequired}" />
 
         </LinearLayout>
 
