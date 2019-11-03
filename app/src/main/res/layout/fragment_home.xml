@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".FragmentTab01" >
 
     <FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".FragmentTab01">
+        android:layout_height="wrap_content" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text="空き時間" />
+
+        <TextView
+            android:id="@+id/free_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:textSize="20sp"
-            android:text="tab1" />
+            android:textSize="20sp" />
 
     </FrameLayout>
 

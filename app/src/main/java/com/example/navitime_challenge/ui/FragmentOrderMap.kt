@@ -1,4 +1,4 @@
-package com.example.navitime_challenge
+package com.example.navitime_challenge.ui
 
 import android.location.Location
 import android.os.Bundle
@@ -10,6 +10,8 @@ import android.webkit.WebViewClient
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.example.navitime_challenge.MainActivity
+import com.example.navitime_challenge.R
 import com.example.navitime_challenge.databinding.FragmentOrdermapBinding
 
 

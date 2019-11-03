@@ -1,87 +1,78 @@
-package com.example.navitime_challenge
+package com.example.navitime_challenge.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.navitime_challenge.R
 import com.example.navitime_challenge.adapter.OrderRecyclerViewAdapter
 import com.example.navitime_challenge.databinding.FragmentOrderlistBinding
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.Query
+import com.example.navitime_challenge.domain.Order
+import com.example.navitime_challenge.viewmodel.OrderListViewModel
 
 class FragmentOrderList: Fragment(){
 
     private val TAG = "FragmentOrderList"
-    private val LIMIT = 50
 
-    lateinit var recyclerViewAdapter: OrderRecyclerViewAdapter
-    lateinit var mFirestore: FirebaseFirestore
-    lateinit var query: Query
-    private lateinit var mActivity: MainActivity
-
-    private lateinit var recyclerView: RecyclerView
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        mActivity = activity as MainActivity
-        mFirestore = mActivity.mFirestore
-
-        query = mFirestore.collection("orders").whereEqualTo("status", 0).limit(LIMIT.toLong())
+    private val viewModel: OrderListViewModel by lazy {
+        val activity = requireNotNull(this.activity) {
+            "You can only access the viewModel after onActivityCreated()"
+        }
+        ViewModelProviders.of(this, OrderListViewModel.Factory(activity.application))
+            .get(OrderListViewModel::class.java)
     }
 
+    private var recyclerViewAdapter: OrderRecyclerViewAdapter? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding =
-            DataBindingUtil.inflate<FragmentOrderlistBinding>(inflater, R.layout.fragment_orderlist, container, false)
+        val binding: FragmentOrderlistBinding = DataBindingUtil.inflate(inflater,
+                R.layout.fragment_orderlist, container, false)
 
-        // RecyclerView
-        recyclerView = binding.orderRecyclerview
-        recyclerViewAdapter = object : OrderRecyclerViewAdapter(query) {
-            override fun onDataChanged() {
-                // Show/hide content if the query returns empty.
-                if (itemCount == 0) {
-                    recyclerView.visibility = View.GONE
-                } else {
-                    recyclerView.visibility = View.VISIBLE
-                }
-            }
+        // Set the lifecycleOwner so DataBinding can observe LiveData
+        binding.lifecycleOwner = viewLifecycleOwner
 
-            override fun onError(e: FirebaseFirestoreException) {
-                // Show a snackbar on errors
-                Log.e(TAG, e.stackTrace.toString())
-            }
+        binding.viewModel = viewModel
+
+        recyclerViewAdapter = OrderRecyclerViewAdapter()
+
+        binding.root.findViewById<RecyclerView>(R.id.order_recyclerview).apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = recyclerViewAdapter
         }
 
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = recyclerViewAdapter
+        // Observer for the network error.
+        viewModel.eventNetworkError.observe(this, Observer<Boolean> { isNetworkError ->
+            if (isNetworkError) onNetworkError()
+        })
 
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel.orderList.observe(viewLifecycleOwner, Observer<List<Order>> { orders ->
+            orders?.apply {
+                recyclerViewAdapter?.orders = orders
+            }
+        })
+    }
 
-        // Start sign in if necessary
-        /*
-        if (shouldStartSignIn()) {
-            startSignIn()
-            return
+    /**
+     * Method for displaying a Toast error message for network errors.
+     */
+    private fun onNetworkError() {
+        if(!viewModel.isNetworkErrorShown.value!!) {
+            Toast.makeText(activity, "Network Error", Toast.LENGTH_LONG).show()
+            viewModel.onNetworkErrorShown()
         }
-         */
-
-        // Start listening for Firestore updates
-        recyclerViewAdapter.startListening()
     }
 
-    override fun onStop() {
-        super.onStop()
-        recyclerViewAdapter.stopListening()
-    }
 }
 

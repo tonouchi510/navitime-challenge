@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.FragmentOrderList">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.navitime_challenge.viewmodel.OrderListViewModel" />
+    </data>
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.FragmentOrderList">
+        android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/order_recyclerview"
             android:layout_width="match_parent"
-            tools:listitem="@layout/item_order"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            tools:listitem="@layout/item_order" />
 
     </LinearLayout>
 
