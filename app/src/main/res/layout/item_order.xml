@@ -6,12 +6,8 @@
 
     <data>
         <variable
-            name="shop"
-            type="String" />
-
-        <variable
-            name="orderTime"
-            type="String" />
+            name="order"
+            type="com.example.navitime_challenge.domain.Order" />
 
         <variable
             name="timeRequired"
@@ -42,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:textSize="18sp"
-                    android:text="@{shop}" />
+                    android:text="@{order.shop.name}" />
 
                 <TextView
                     android:id="@+id/order_time"
@@ -50,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:textSize="10sp"
-                    android:text="@{orderTime}" />
+                    android:text="@{order.createdAt.toDate().toString()}" />
 
             </LinearLayout>
 
