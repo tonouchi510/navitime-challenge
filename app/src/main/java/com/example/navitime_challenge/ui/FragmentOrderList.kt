@@ -1,6 +1,7 @@
 package com.example.navitime_challenge.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,7 +58,7 @@ class FragmentOrderList: Fragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.orderList.observe(viewLifecycleOwner, Observer<List<Order>> { orders ->
+        viewModel.getSavedOrdersFromRepository().observe(viewLifecycleOwner, Observer<List<Order>> { orders ->
             orders?.apply {
                 recyclerViewAdapter?.orders = orders
             }
