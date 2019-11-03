@@ -5,10 +5,10 @@ import com.google.firebase.firestore.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 data class Order(
-    var id: String? = null,
-    var status: Int? = null,
-    var items: List<String>? = null,
-    var shop: Shop? = null,
-    var user_info: User? = null,
-    var created_at: Timestamp? = null
+    val id: String = "",
+    val status: String = "",
+    val items: List<String>? = null,
+    val shop: Shop? = null,
+    val user_info: User? = null,
+    val createdAt: Timestamp? = null
 )
