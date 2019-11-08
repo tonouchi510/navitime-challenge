@@ -13,15 +13,19 @@ import android.util.Log
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
+import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import com.example.navitime_challenge.BuildConfig.APPLICATION_ID
 import com.example.navitime_challenge.adapter.ViewPagerAdapter
+import com.example.navitime_challenge.databinding.ActivityMainBinding
+import com.example.navitime_challenge.ui.FragmentHome
+import com.example.navitime_challenge.ui.FragmentOrderList
+import com.example.navitime_challenge.ui.FragmentOrderMap
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE
 import com.google.android.material.tabs.TabLayout
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -29,30 +33,27 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 34
 
+    private lateinit var binding: ActivityMainBinding
+
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
     private lateinit var adapter: ViewPagerAdapter
-    lateinit var mFirestore: FirebaseFirestore
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     lateinit var location: Location
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        // Firestore
-        FirebaseFirestore.setLoggingEnabled(true)
-        mFirestore = FirebaseFirestore.getInstance()
-
-        tabLayout = findViewById(R.id.tab_layout)
-        viewPager = findViewById(R.id.pager)
+        tabLayout = binding.tabLayout
+        viewPager = binding.pager
         adapter = ViewPagerAdapter(supportFragmentManager, this)
 
         // Add fragments
-        adapter.addFragment(FragmentTab01(), "Home")
-        adapter.addFragment(FragmentTab02(), "OrderList")
-        adapter.addFragment(FragmentTab03(), "OrderMap")
+        adapter.addFragment(FragmentHome(), "Home")
+        adapter.addFragment(FragmentOrderList(), "OrderList")
+        adapter.addFragment(FragmentOrderMap(), "OrderMap")
 
         viewPager.adapter = adapter
         tabLayout.setupWithViewPager(pager)
