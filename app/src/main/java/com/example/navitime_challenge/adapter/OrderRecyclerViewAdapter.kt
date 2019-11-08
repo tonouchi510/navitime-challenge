@@ -33,7 +33,6 @@ class OrderRecyclerViewAdapter : RecyclerView.Adapter<OrderViewHolder>() {
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
         holder.viewDataBinding.also {
             it.order = orders[position]
-            it.orderTime.text = orders[position].createdAt?.toDate().toString()
             it.timeRequired.text = "15分"
         }
     }

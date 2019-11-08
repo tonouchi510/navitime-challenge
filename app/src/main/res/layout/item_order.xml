@@ -37,16 +37,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:text="@{order.shop.name}" />
 
                 <TextView
-                    android:id="@+id/order_time"
+                    android:id="@+id/shop_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:textSize="10sp"
-                    android:text="@{order.createdAt.toDate().toString()}" />
+                    android:textSize="12sp"
+                    android:text="@{order.shop.address}" />
 
             </LinearLayout>
 
