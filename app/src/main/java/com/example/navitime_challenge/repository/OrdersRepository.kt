@@ -14,6 +14,7 @@ class OrdersRepository {
     fun getSavedOrders(): Query {
         return firestoreDB.collection("orders")
             .whereEqualTo("status", "0")
+            .orderBy("shop.address")
             .limit(30)
     }
 
