@@ -1,5 +1,6 @@
 package com.example.navitime_challenge.ui
 
+import android.annotation.SuppressLint
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -33,6 +34,7 @@ class FragmentOrderMap: Fragment() {
 
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentOrdermapBinding>(inflater,
             R.layout.fragment_ordermap, container, false)
@@ -44,6 +46,7 @@ class FragmentOrderMap: Fragment() {
 
         mapView = binding.mapWebview
         mapView.webViewClient = WebViewClient()
+        mapView.settings.javaScriptEnabled = true
 
         val query: String = "latitude=" + location.latitude + "&longitude=" + location.longitude
         mapView.loadUrl("https://asia-northeast1-navitime-challenge.cloudfunctions.net/getMap?$query")

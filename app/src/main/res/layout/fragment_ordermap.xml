@@ -12,7 +12,7 @@
         tools:context=".ui.FragmentOrderMap">
 
         <LinearLayout
-            android:layout_width="330dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_marginStart="8dp" >
@@ -22,16 +22,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textSize="10sp"
-                android:text="tab3" />
+                android:textSize="12sp"
+                android:text="35.01" />
 
             <TextView
                 android:id="@+id/longitude_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textSize="10sp"
-                android:text="00" />
+                android:textSize="12sp"
+                android:text="139.31" />
 
             <WebView
                 android:id="@+id/map_webview"
