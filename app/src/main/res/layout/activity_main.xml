@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".MainActivity">
+
+
+        <Button
+            android:id="@+id/buttonServiceStart"
+            android:layout_width="261dp"
+            android:layout_height="125dp"
+            android:text="チャネル設定通知" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/pager"
@@ -23,15 +29,17 @@
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/tab1_label"/>
+                    android:text="@string/tab1_label" />
+
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/tab2_label"/>
+                    android:text="@string/tab2_label" />
+
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/tab3_label"/>
+                    android:text="@string/tab3_label" />
 
             </com.google.android.material.tabs.TabLayout>
 
