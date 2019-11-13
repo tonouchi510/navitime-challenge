@@ -110,47 +110,6 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-
-
-    /*
-    override fun onResume() {
-        super.onResume()
-
-        notifyButton.setOnClickListener {
-
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            // カテゴリー名（通知設定画面に表示される情報）
-            val name = "通知のタイトル的情報を設定"
-            // システムに登録するChannelのID
-            val id = "casareal_chanel"
-            // 通知の詳細情報（通知設定画面に表示される情報）
-            val notifyDescription = "この通知の詳細情報を設定します"
-
-            // Channelの取得と生成
-            if (notificationManager.getNotificationChannel(id) == null) {
-                val mChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH)
-                mChannel.apply {
-                    description = notifyDescription
-                }
-                notificationManager.createNotificationChannel(mChannel)
-            }
-
-            //val pending: PendingIntent = PendingIntent.getActivities(this, 0, Intent(this,MainActivity::class.java),0)
-
-            val notification = NotificationCompat
-                .Builder(this, id)
-                .apply {
-                    setSmallIcon(R.drawable.ic_launcher_foreground)
-                    setContentTitle("通知 タイトル")
-                    setContentText("通知のの内容がここに表示される")
-                    setAutoCancel(true)
-                }.build()
-            notificationManager.notify(1, notification)
-        }
-    }
-     */
-
     private fun showSnackbar(
         snackStrId: Int,
         actionStrId: Int = 0,

@@ -2,6 +2,7 @@ package com.example.navitime_challenge
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -29,17 +30,19 @@ class NotificationService : Service() {
             manager.createNotificationChannel(mChannel)
         }
 
+        val resultIntent : PendingIntent = PendingIntent.getActivity(this, 0, Intent(this,MainActivity::class.java),0)
+
         val notification = NotificationCompat.Builder(this,id).apply {
             setSmallIcon(R.drawable.ic_launcher_background)
             setContentTitle("通知のタイトル")
             setContentText("通知の内容")
+            setContentIntent(resultIntent)
         }.build()
 
         Thread(
             Runnable {
                 (0..5).map {
                     Thread.sleep(1000)
-
                 }
 
                 stopForeground(Service.STOP_FOREGROUND_DETACH)
