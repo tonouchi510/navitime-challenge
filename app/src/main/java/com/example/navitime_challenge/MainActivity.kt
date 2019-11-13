@@ -2,10 +2,14 @@ package com.example.navitime_challenge
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
@@ -15,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
+import androidx.work.Data
 import com.example.navitime_challenge.BuildConfig.APPLICATION_ID
 import com.example.navitime_challenge.adapter.ViewPagerAdapter
 import com.example.navitime_challenge.databinding.ActivityMainBinding
@@ -27,15 +32,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE
 import com.google.android.material.tabs.TabLayout
 
-
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import androidx.core.app.NotificationCompat
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 
 
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -73,8 +75,7 @@ class MainActivity : AppCompatActivity() {
         location.longitude = 139.6196
 
         buttonServiceStart.setOnClickListener {
-            val serviceIntent = Intent(this, NotificationService::class.java)
-            startService(serviceIntent)
+            startWorker()
         }
 
     }
@@ -88,6 +89,40 @@ class MainActivity : AppCompatActivity() {
             getLastLocation()
         }
     }
+
+
+    private fun startWorker() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return
+        }
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val name = "通知のタイトル的情報を設定"
+        val id = "notification_work"
+        val notifyDescription = "この通知の詳細情報を設定します"
+
+        if (manager.getNotificationChannel(id) == null) {
+            val channel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH)
+            channel.apply {
+                description = notifyDescription
+            }
+            manager.createNotificationChannel(channel)
+        }
+
+        val inputData = Data.Builder().putString("title", "シフト提案_test1").putString("message","提案シフトがあります。確認してください。").build()
+        val Worker = OneTimeWorkRequestBuilder<LocalNotificationWorker>()
+            .setInitialDelay(3, TimeUnit.SECONDS)
+            .setInputData(inputData)
+            .build()
+        WorkManager.getInstance().enqueue(Worker)
+        val inputData2 = Data.Builder().putString("title", "シフト提案_test2").putString("message","提案シフトがあります。確認してください。").build()
+        val Worker2 = OneTimeWorkRequestBuilder<LocalNotificationWorker>()
+            .setInitialDelay(10, TimeUnit.SECONDS)
+            .setInputData(inputData2)
+            .build()
+        WorkManager.getInstance().enqueue(Worker2)
+
+    }
+
 
     /**
      * Provides a simple way of getting a device's location and is well suited for
