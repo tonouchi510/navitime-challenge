@@ -30,6 +30,6 @@ object NavitimeApi {
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
-    val service: NavitimeApiService by lazy { retrofit.create(NavitimeApiService::class.java) }
+    val service = retrofit.create(NavitimeApiService::class.java)
 
 }

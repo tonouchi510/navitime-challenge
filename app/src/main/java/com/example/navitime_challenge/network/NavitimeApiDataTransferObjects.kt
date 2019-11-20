@@ -2,7 +2,9 @@ package com.example.navitime_challenge.network
 
 import com.example.navitime_challenge.domain.Coord
 import com.example.navitime_challenge.domain.Route
+import com.example.navitime_challenge.database.DatabaseRoute
 import com.squareup.moshi.JsonClass
+import kotlin.random.Random
 
 @JsonClass(generateAdapter = true)
 data class NavitimeRouteContainer(val routes: List<NavitimeRoute>)
@@ -24,6 +26,22 @@ fun NavitimeRouteContainer.asDomainModel(): List<Route> {
             type = it.type,
             name = it.name,
             coord = it.coord,
+            move = it.move,
+            from_time = it.from_time,
+            to_time = it.to_time,
+            time = it.time,
+            distance = it.distance)
+    }
+}
+
+fun NavitimeRouteContainer.asDatabaseModel(): List<DatabaseRoute> {
+    return routes.map {
+        DatabaseRoute(
+            id = Random.nextLong(10),
+            type = it.type,
+            name = it.name,
+            lat = it.coord?.lat,
+            lon = it.coord?.lon,
             move = it.move,
             from_time = it.from_time,
             to_time = it.to_time,
