@@ -15,6 +15,6 @@ data class Route(
 )
 
 data class Coord(
-    val lat: Double = 0.0,
-    val lon: Double = 0.0
+    val lat: Double? = null,
+    val lon: Double? = null
 )
