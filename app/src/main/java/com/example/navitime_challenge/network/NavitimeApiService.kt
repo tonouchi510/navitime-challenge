@@ -14,7 +14,7 @@ import retrofit2.http.GET
  * A retrofit service to fetch a optimal shift.
  */
 interface NavitimeApiService {
-    @GET("getRoute?start={\"lat\":35.706822,\"lon\":139.813956}&shop={\"lat\":35.655392,\"lon\":139.748642}&time=2018-05-01T13:00&via=[{%27name%27:%27東京都台東区秋葉原%27,%27lat%27:%2735.702069%27,%27lon%27:%27139.775327%27,%27stay-time%27:%2730%27},{%27name%27:%27代々木公園%27,%27lat%27:%2735.662141%27,%27lon%27:%27139.771023%27,%27spot%27:%2702301-1300514%27},{%27stay-time%27:%2730%27,%27name%27:%27東京%27,%27node%27:%2700006668%27}]")
+    @GET("getRoute?start={\"lat\":35.706822,\"lon\":139.813956}&shop={\"lat\":35.655392,\"lon\":139.748642}&starttime=2018-05-01T13:00&endtime=2018-05-01T15:55&via=[{\"name\":\"東京都台東区秋葉原\",\"lat\":\"35.702069\",\"lon\":\"139.775327\",\"stay-time\":\"30\"},{\"name\":\"代々木公園\",\"lat\":\"35.662141\",\"lon\":\"139.771023\",\"spot\":\"02301-1300514\"},{\"stay-time\":\"30\",\"name\":\"東京\",\"node\":\"00006668\"}]")
     fun getOptimalShift(): Deferred<NavitimeRouteContainer>
 }
 
