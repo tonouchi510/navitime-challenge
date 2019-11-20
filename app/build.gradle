@@ -51,6 +51,16 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
 
+    // Google Calendar
+    implementation('com.google.api-client:google-api-client-android:1.28.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+
+    implementation('com.google.apis:google-api-services-calendar:v3-rev400-1.25.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+
+
     // firebase
     implementation 'com.google.firebase:firebase-firestore-ktx:21.1.1'
     implementation 'com.google.firebase:firebase-functions-ktx:19.0.1'
