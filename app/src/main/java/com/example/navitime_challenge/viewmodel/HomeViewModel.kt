@@ -1,59 +1,80 @@
 package com.example.navitime_challenge.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.navitime_challenge.network.NavitimeApi
+import com.example.navitime_challenge.database.getDatabase
+import com.example.navitime_challenge.repository.RouteRepository
 import kotlinx.coroutines.*
-
-enum class NavitimeApiStatus { LOADING, ERROR, DONE }
+import timber.log.Timber
+import java.io.IOException
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
-    // The internal MutableLiveData that stores the status of the most recent request
-    private val _status = MutableLiveData<NavitimeApiStatus>()
+    private val routeRepository = RouteRepository(getDatabase(application))
 
-    // The external immutable LiveData for the request status
-    val status: LiveData<NavitimeApiStatus>
-        get() = _status
-
-    // Internally, we use a MutableLiveData, because we will be updating the List of MarsProperty
-    // with new values
-    private val _routes = MutableLiveData<String>()
-
-    // The external LiveData interface to the property is immutable, so only this class can modify
-    val routes: LiveData<String>
-        get() = _routes
+    val routes = routeRepository.routes
 
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
+    /**
+     * Event triggered for network error. This is private to avoid exposing a
+     * way to set this value to observers.
+     */
+    private var _eventNetworkError = MutableLiveData<Boolean>(false)
+
+    /**
+     * Event triggered for network error. Views should use this to get access
+     * to the data.
+     */
+    val eventNetworkError: LiveData<Boolean>
+        get() = _eventNetworkError
+
+    /**
+     * Flag to display the error message. This is private to avoid exposing a
+     * way to set this value to observers.
+     */
+    private var _isNetworkErrorShown = MutableLiveData<Boolean>(false)
+
+    /**
+     * Flag to display the error message. Views should use this to get access
+     * to the data.
+     */
+    val isNetworkErrorShown: LiveData<Boolean>
+        get() = _isNetworkErrorShown
+
+    /**
+     * init{} is called immediately when this ViewModel is created.
+     */
     init {
-        // 後でTimerとか使って定期実行できるようにする
-        getOptimalShift()
+        refreshOptimalShift()
     }
 
-    private fun getOptimalShift() {
+    private fun refreshOptimalShift() {
         viewModelScope.launch {
-            // Get the Deferred object for our Retrofit request
-            var getOptimalShiftDeferred = NavitimeApi.service.getOptimalShift()
             try {
-                _status.value = NavitimeApiStatus.LOADING
-                // this will run on a thread managed by Retrofit
-                val response = getOptimalShiftDeferred.await()
-                Log.w("-------------------------------------", response.toString())
-                _status.value = NavitimeApiStatus.DONE
-                _routes.value = response.toString()
-            } catch (e: Exception) {
-                Log.w("-------------------------------------", e.toString())
-                _status.value = NavitimeApiStatus.ERROR
-                _routes.value = ""
+                routeRepository.refreshRoutes()
+                _eventNetworkError.value = false
+                _isNetworkErrorShown.value = false
+                Timber.d(routes.value.toString())
+
+            } catch (networkError: IOException) {
+                // Show a Toast error message and hide the progress bar.
+                if(routes.value!!.isEmpty())
+                    _eventNetworkError.value = true
             }
         }
+    }
+
+    /**
+    * Resets the network error flag.
+    */
+    fun onNetworkErrorShown() {
+        _isNetworkErrorShown.value = true
     }
 
     override fun onCleared() {
