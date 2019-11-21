@@ -1,4 +1,4 @@
-package com.example.navitime_challenge
+package com.example.navitime_challenge.ui
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.annotation.SuppressLint
@@ -16,11 +16,9 @@ import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import com.example.navitime_challenge.BuildConfig.APPLICATION_ID
+import com.example.navitime_challenge.R
 import com.example.navitime_challenge.adapter.ViewPagerAdapter
 import com.example.navitime_challenge.databinding.ActivityMainBinding
-import com.example.navitime_challenge.ui.FragmentHome
-import com.example.navitime_challenge.ui.FragmentOrderList
-import com.example.navitime_challenge.ui.FragmentOrderMap
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
@@ -44,7 +42,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_main
+        )
 
         tabLayout = binding.tabLayout
         viewPager = binding.pager
@@ -168,7 +168,9 @@ class MainActivity : AppCompatActivity() {
                 // when permissions are denied. Otherwise, your app could appear unresponsive to
                 // touches or interactions which have required permissions.
                 else -> {
-                    showSnackbar(R.string.permission_denied_explanation, R.string.settings,
+                    showSnackbar(
+                        R.string.permission_denied_explanation,
+                        R.string.settings,
                         View.OnClickListener {
                             // Build intent that displays the App settings screen.
                             val intent = Intent().apply {

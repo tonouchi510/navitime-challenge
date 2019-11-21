@@ -45,14 +45,14 @@ dependencies {
 
 
     // firebase
-    implementation 'com.google.firebase:firebase-firestore-ktx:21.1.1'
+    implementation 'com.google.firebase:firebase-firestore-ktx:21.3.0'
     implementation 'com.google.firebase:firebase-functions-ktx:19.0.1'
 
     // location
     implementation 'com.google.android.gms:play-services-location:17.0.0'
 
     // webkit
-    implementation 'androidx.webkit:webkit:1.0.0'
+    implementation 'androidx.webkit:webkit:1.1.0'
 
     // recyclerview and cardview
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
@@ -79,7 +79,7 @@ dependencies {
 
     // arch components
     // ViewModel and LiveData
-    def lifecycle_version = "2.2.0-alpha01"
+    def lifecycle_version = "2.2.0-rc02"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 
     // logging
@@ -90,10 +90,13 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.7.1'
 
     // Room dependency
-    def room_version = "2.1.0-beta01"
+    def room_version = "2.2.1"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
+    // WorkManager dependency
+    def work_version = "1.0.1"
+    implementation "android.arch.work:work-runtime-ktx:$work_version"
 
     testImplementation 'junit:junit:4.12'
 
