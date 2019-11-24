@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), OnConnectionFailedListener {
         location.longitude = 139.6196
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("212813157070-g14uvtpkmb9go076n0c1av01u6a67j9f.apps.googleusercontent.com")
+            .requestIdToken("212813157070-mvk14p3ueslbfcqa9sho4q8dplov27m4.apps.googleusercontent.com")
             .requestEmail()
             .build()
 
