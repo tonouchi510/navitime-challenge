@@ -5,6 +5,7 @@ import kotlinx.coroutines.Deferred
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Header
 
 // Since we only have one service, this can all go in one file.
 // If you add more services, split this to multiple files and make sure to share the retrofit
@@ -27,7 +28,7 @@ object GoogleCalendarApi {
 
     // Configure retrofit to parse JSON and use coroutines
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://www.googleapis.com/calendar/v3")
+        .baseUrl("https://www.googleapis.com/calendar/v3/")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()

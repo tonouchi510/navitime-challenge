@@ -38,9 +38,11 @@ import com.google.android.material.tabs.TabLayout
 
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.navitime_challenge.network.GoogleCalendarApi
 import com.example.navitime_challenge.ui.FragmentCalendarTest
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.GoogleApiClient
@@ -48,7 +50,6 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 
 
 import kotlinx.android.synthetic.main.activity_main.*
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 
@@ -95,7 +96,8 @@ class MainActivity : AppCompatActivity(), OnConnectionFailedListener {
         location.longitude = 139.6196
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("212813157070-mvk14p3ueslbfcqa9sho4q8dplov27m4.apps.googleusercontent.com")
+            .requestIdToken("212813157070-cg70au51ob4fk4bvo89mt783bvvhkhkf.apps.googleusercontent.com")
+            .requestServerAuthCode("212813157070-cg70au51ob4fk4bvo89mt783bvvhkhkf.apps.googleusercontent.com")
             .requestEmail()
             .build()
 
@@ -276,13 +278,27 @@ class MainActivity : AppCompatActivity(), OnConnectionFailedListener {
             Log.w(TAG, "Status:"+status)
             //handleSignInResult(result)
             if (result.isSuccess) {
-                try {
-                    val account: GoogleSignInAccount = result.signInAccount as GoogleSignInAccount
-                    val idToken = account.idToken
-                    Log.w(TAG,"id_token"+idToken)
-                } catch (e: ApiException) {
-                    Log.e("error",e.toString())
-                }
+                val account: GoogleSignInAccount = result.signInAccount as GoogleSignInAccount
+                val idToken = account.idToken
+                val authCode = account.serverAuthCode
+
+                Log.w(TAG, "id_token:" + idToken)
+                Log.w(TAG, "auth code:"+ authCode)
+
+                /*
+                val transport = GoogleNetHttpTransport.newTrustedTransport()
+                val jsonFactory = JacksonFactory.getDefaultInstance()
+                val input = javaClass.getResourceAsStream("/client_secret.json")  // クラスパス上ルートディレクトリにあるものとする
+                val clientSecrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(), InputStreamReader(input))
+                val scopes = Collections.singletonList(DriveScopes.DRIVE)  // Quick Start と異なり書き込み権限を与えておく
+                val flow = GoogleAuthorizationCodeFlow.Builder(transport, jsonFactory, clientSecrets, scopes)
+                    .setDataStoreFactory(FileDataStoreFactory(File("credentials")))  // 認証情報を格納するディレクトリ
+                    .setAccessType("offline")
+                    .build()
+
+                val getCalendarId = GoogleCalendarApi.service.getCalendarId()
+                Log.w(TAG, "id:" + getCalendarId)
+                 */
             }
         }
     }
