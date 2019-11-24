@@ -19,6 +19,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+        nosign {
         }
     }
 
@@ -50,6 +53,9 @@ dependencies {
     // constraint layout
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
+
+    // Google Auth
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
 
     // Google Calendar
     implementation('com.google.api-client:google-api-client-android:1.28.0') {

@@ -15,7 +15,7 @@ import retrofit2.http.GET
  */
 
 interface GoogleCalendarApiService {
-    @GET("getRoute/users/me/calendarList")
+    @GET("calendars?calendarId=navitime.challenge.user@gmail.com")
     fun getCalendarId(): Deferred<GoogleCalendarContainer>
 }
 

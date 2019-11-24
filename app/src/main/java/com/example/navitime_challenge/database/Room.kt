@@ -7,15 +7,15 @@ import androidx.room.*
 @Dao
 interface ScheduleDao {
     @Query("select * from databaseschedule")
-    fun getVideos(): LiveData<List<DatabaseSchedule>>
+    fun getSchedules(): LiveData<List<DatabaseSchedule>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll( videos: List<DatabaseSchedule>)
+    fun insertAll( schedules: List<DatabaseSchedule>)
 }
 
 @Database(entities = [DatabaseSchedule::class], version = 1)
 abstract class SchedulesDatabase: RoomDatabase() {
-    abstract val videoDao: ScheduleDao
+    abstract val ScheduleDao: ScheduleDao
 }
 
 private lateinit var INSTANCE: SchedulesDatabase

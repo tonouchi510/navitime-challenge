@@ -15,7 +15,8 @@ data class GoogleCalendarContainer(val schedules: List<NetworkSchedule>)
 
 @JsonClass(generateAdapter = true)
 data class NetworkSchedule(
-    val items: List<Calendar.CalendarList>
+    val summary: String
+    //val items: List<Calendar.CalendarList>
     /*
     val kind: String,
     val etag: String?,
@@ -39,7 +40,7 @@ data class NetworkSchedule(
 fun GoogleCalendarContainer.asDatabaseModel(): List<DatabaseSchedule> {
     return schedules.map {
         DatabaseSchedule(
-            items = it.items
+            summary = it.summary
         )
     }
 }

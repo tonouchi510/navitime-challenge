@@ -13,7 +13,8 @@ import org.joda.time.DateTime
 @Entity
 data class DatabaseSchedule constructor(
     @PrimaryKey
-    val items: List<Calendar.CalendarList>
+    val summary: String
+    //val items: List<Calendar.CalendarList>
 
     /*
     val eventId: String,
@@ -27,7 +28,7 @@ data class DatabaseSchedule constructor(
 fun List<DatabaseSchedule>.asDomainModel(): List<Schedule> {
     return map {
         Schedule(
-            items = it.items
+            summary = it.summary
             /*
             eventId = it.eventId,
             title = it.title,

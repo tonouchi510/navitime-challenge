@@ -5,7 +5,9 @@ import org.joda.time.DateTime
 
 
 data class Schedule(
-    val items: List<Calendar.CalendarList>
+    val summary: String
+    //val calendarId: String
+    //val items: List<Calendar.CalendarList>
     /*
     val eventId: String,
     val title: String,

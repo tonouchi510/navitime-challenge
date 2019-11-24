@@ -2,6 +2,7 @@ package com.example.navitime_challenge
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -20,6 +21,7 @@ import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import androidx.work.Data
+import androidx.work.Logger
 import com.example.navitime_challenge.BuildConfig.APPLICATION_ID
 import com.example.navitime_challenge.adapter.ViewPagerAdapter
 import com.example.navitime_challenge.databinding.ActivityMainBinding
@@ -28,18 +30,34 @@ import com.example.navitime_challenge.ui.FragmentOrderList
 import com.example.navitime_challenge.ui.FragmentOrderMap
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE
 import com.google.android.material.tabs.TabLayout
 
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.navitime_challenge.ui.FragmentCalendarTest
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener
 
 
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-class MainActivity : AppCompatActivity() {
+
+
+
+class MainActivity : AppCompatActivity(), OnConnectionFailedListener {
+    override fun onConnectionFailed(p0: ConnectionResult) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     private val TAG = "MainActivity"
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 34
@@ -49,6 +67,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
     private lateinit var adapter: ViewPagerAdapter
+
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     lateinit var location: Location
@@ -64,7 +83,8 @@ class MainActivity : AppCompatActivity() {
         // Add fragments
         adapter.addFragment(FragmentHome(), "Home")
         adapter.addFragment(FragmentOrderList(), "OrderList")
-        adapter.addFragment(FragmentOrderMap(), "OrderMap")
+        //adapter.addFragment(FragmentOrderMap(), "OrderMap")
+        adapter.addFragment(FragmentCalendarTest(), "CalendarTest")
 
         viewPager.adapter = adapter
         tabLayout.setupWithViewPager(pager)
@@ -74,8 +94,21 @@ class MainActivity : AppCompatActivity() {
         location.latitude = 35.4848
         location.longitude = 139.6196
 
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("212813157070-g14uvtpkmb9go076n0c1av01u6a67j9f.apps.googleusercontent.com")
+            .requestEmail()
+            .build()
+
+        val mGoogleApiClient = GoogleApiClient.Builder(this)
+            .enableAutoManage(this, this)
+            .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+            .build()
+
         buttonServiceStart.setOnClickListener {
-            startWorker()
+            //startWorker()
+            val signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient)
+            startActivityForResult(signInIntent, REQUEST_PERMISSIONS_REQUEST_CODE)
+
         }
 
     }
@@ -232,4 +265,38 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+            val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
+            val status = result.status
+            Log.w(TAG,"result:"+result)
+            Log.w(TAG, "isSuccess:"+result.isSuccess)
+            Log.w(TAG, "Status:"+status)
+            //handleSignInResult(result)
+            if (result.isSuccess) {
+                try {
+                    val account: GoogleSignInAccount = result.signInAccount as GoogleSignInAccount
+                    val idToken = account.idToken
+                    Log.w(TAG,"id_token"+idToken)
+                } catch (e: ApiException) {
+                    Log.e("error",e.toString())
+                }
+            }
+        }
+    }
+
+    /*
+    private fun handleSignInResult(result : GoogleSignInResult) {
+      Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+      if (result.isSuccess()) {
+          // Signed in successfully, show authenticated UI.
+          val acct : GoogleSignInAccount? = result.getSignInAccount();
+      } else {
+          // Signed out, show unauthenticated UI.
+      }
+  }
+     */
+
 }
