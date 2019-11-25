@@ -52,7 +52,7 @@ class NavitimeApplication : Application() {
             }
             .build()
 
-        val repeatingRequest = PeriodicWorkRequestBuilder<GetOptimalShiftWorker>(1, TimeUnit.DAYS)
+        val repeatingRequest = PeriodicWorkRequestBuilder<GetOptimalShiftWorker>(1, TimeUnit.MINUTES)
             .setConstraints(constraints)
             .build()
 
