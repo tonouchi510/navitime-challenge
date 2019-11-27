@@ -1,29 +1,24 @@
 package com.example.navitime_challenge.ui
 
-import android.accounts.Account
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
+import com.example.navitime_challenge.NavitimeApplication
 import com.example.navitime_challenge.R
 import com.example.navitime_challenge.databinding.ActivitySigninBinding
-import com.google.android.gms.auth.GoogleAuthException
-import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
-import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager.ACCOUNT_TYPE
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_signin.*
-import java.io.IOException
 
 
 /**
@@ -31,12 +26,10 @@ import java.io.IOException
  */
 class GoogleSignInActivity : AppCompatActivity(), View.OnClickListener {
 
-    // [START declare_auth]
-    private lateinit var auth: FirebaseAuth
-    // [END declare_auth]
-
+    private lateinit var app: NavitimeApplication
     private lateinit var binding: ActivitySigninBinding
 
+    private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +43,8 @@ class GoogleSignInActivity : AppCompatActivity(), View.OnClickListener {
         binding.signOutButton.setOnClickListener(this)
         binding.disconnectButton.setOnClickListener(this)
 
+        app = this.application as NavitimeApplication
+
         // [START config_signin]
         // Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -60,7 +55,6 @@ class GoogleSignInActivity : AppCompatActivity(), View.OnClickListener {
         // [END config_signin]
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
-
         // [START initialize_auth]
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
@@ -71,8 +65,8 @@ class GoogleSignInActivity : AppCompatActivity(), View.OnClickListener {
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
-        //val currentUser = auth.currentUser
-        updateUI(null)
+        val currentUser = auth.currentUser
+        updateUI(currentUser)
     }
     // [END on_start_check_user]
 
@@ -80,7 +74,6 @@ class GoogleSignInActivity : AppCompatActivity(), View.OnClickListener {
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
@@ -110,6 +103,7 @@ class GoogleSignInActivity : AppCompatActivity(), View.OnClickListener {
                     Log.d(TAG, task.result?.credential.toString())
                     Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
+                    app.setAuthUser(acct)
                     updateUI(user, acct.serverAuthCode)
                 } else {
                     // If sign in fails, display a message to the user.
@@ -158,8 +152,8 @@ class GoogleSignInActivity : AppCompatActivity(), View.OnClickListener {
 
             user.getIdToken(true).addOnSuccessListener {
                 val idToken = it.token!!
-                Log.w("--------------------------", authCode!!)
-                Log.w("----------------", idToken)
+                Log.w(TAG, authCode!!)
+                Log.w(TAG, idToken)
 
                 val intent = Intent(application, MainActivity::class.java)
                 intent.putExtra(ID_TOKEN, idToken)

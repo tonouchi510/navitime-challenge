@@ -2,6 +2,7 @@ package com.example.navitime_challenge.ui
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -16,6 +17,7 @@ import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import com.example.navitime_challenge.BuildConfig.APPLICATION_ID
+import com.example.navitime_challenge.NavitimeApplication
 import com.example.navitime_challenge.R
 import com.example.navitime_challenge.adapter.ViewPagerAdapter
 import com.example.navitime_challenge.databinding.ActivityMainBinding
@@ -24,6 +26,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +36,9 @@ class MainActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 34
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var idToken: String
+    private lateinit var authCode: String
+    private lateinit var app: NavitimeApplication
 
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
@@ -40,11 +47,21 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     lateinit var location: Location
 
+    companion object {
+        fun getLaunchIntent(from: Context) = Intent(from, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,
             R.layout.activity_main
         )
+        idToken = intent.getStringExtra(GoogleSignInActivity.ID_TOKEN)
+        authCode = intent.getStringExtra(GoogleSignInActivity.AUTHCODE)
+        Log.w("MainActivity", idToken)
+        Log.w("MainActivity", authCode)
 
         tabLayout = binding.tabLayout
         viewPager = binding.pager
@@ -58,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = adapter
         tabLayout.setupWithViewPager(pager)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         location = Location("dummyProvider")
         location.latitude = 35.4848
         location.longitude = 139.6196
@@ -67,11 +84,13 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        /*
         if (!checkPermissions()) {
             requestPermissions()
         } else {
             getLastLocation()
         }
+         */
     }
 
     /**

@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.work.*
 
 import com.example.navitime_challenge.work.GetOptimalShiftWorker
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,6 +18,8 @@ import java.util.concurrent.TimeUnit
 class NavitimeApplication : Application() {
 
     private val applicationScope = CoroutineScope(Dispatchers.Default)
+    private lateinit var user: GoogleSignInAccount
+    private lateinit var accessToken: String
 
     /**
      * onCreate is called before the first screen is shown to the user.
@@ -61,5 +64,13 @@ class NavitimeApplication : Application() {
             GetOptimalShiftWorker.WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
             repeatingRequest)
+    }
+
+    fun setAuthUser(account: GoogleSignInAccount) {
+        user = account
+    }
+
+    fun setAccessToken(token: String) {
+        accessToken = token
     }
 }
