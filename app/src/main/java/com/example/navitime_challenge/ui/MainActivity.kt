@@ -36,9 +36,6 @@ class MainActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 34
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var idToken: String
-    private lateinit var authCode: String
-    private lateinit var app: NavitimeApplication
 
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
@@ -58,11 +55,6 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this,
             R.layout.activity_main
         )
-        idToken = intent.getStringExtra(GoogleSignInActivity.ID_TOKEN)
-        authCode = intent.getStringExtra(GoogleSignInActivity.AUTHCODE)
-        Log.w("MainActivity", idToken)
-        Log.w("MainActivity", authCode)
-
         tabLayout = binding.tabLayout
         viewPager = binding.pager
         adapter = ViewPagerAdapter(supportFragmentManager, this)
