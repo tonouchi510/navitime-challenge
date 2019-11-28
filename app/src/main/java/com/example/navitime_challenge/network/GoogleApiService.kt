@@ -5,6 +5,7 @@ import kotlinx.coroutines.Deferred
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 // Since we only have one service, this can all go in one file.
@@ -16,12 +17,21 @@ import retrofit2.http.POST
  */
 
 interface GoogleAuthService {
+    @FormUrlEncoded
     @POST("token")
     fun getAccessToken(
         @Field("client_id") clientId: String,
         @Field("client_secret") clientSecret: String,
         @Field("grant_type") grantType: String = "authorization_code",
         @Field("code") code: String): Deferred<GoogleAuthContainer>
+
+    @FormUrlEncoded
+    @POST("token")
+    fun refreshAccessToken(
+        @Field("client_id") clientId: String,
+        @Field("client_secret") clientSecret: String,
+        @Field("grant_type") grantType: String = "refresh_token",
+        @Field("refresh_token") refreshToken: String): Deferred<GoogleAuthContainer>
 }
 
 
