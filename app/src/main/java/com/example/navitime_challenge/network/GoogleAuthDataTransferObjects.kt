@@ -12,7 +12,7 @@ data class GoogleAuthContainer(
     @Json(name = "refresh_token") val refreshToken: String = "",
     @Json(name = "scope") val scope: String?,
     @Json(name = "token_type") val tokenType: String,
-    @Json(name = "id_token") val idToken: String = "")
+    @Json(name = "id_token") val idToken: String?)
 
 
 fun GoogleAuthContainer.asDomainModel(): Token {
@@ -23,7 +23,7 @@ fun GoogleAuthContainer.asDomainModel(): Token {
 
 fun GoogleAuthContainer.asDatabaseModel(): DatabaseAuth {
     return DatabaseAuth(
-        id = idToken,
+        id = "111111111",
         token = refreshToken
     )
 }
