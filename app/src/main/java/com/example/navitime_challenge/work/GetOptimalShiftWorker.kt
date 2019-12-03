@@ -1,13 +1,18 @@
 package com.example.navitime_challenge.work
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.navitime_challenge.R
 import com.example.navitime_challenge.domain.Order
 import com.example.navitime_challenge.domain.Route
 import com.example.navitime_challenge.network.NavitimeApi
 import com.example.navitime_challenge.network.asDomainModel
 import com.example.navitime_challenge.repository.OrdersRepository
+import com.example.navitime_challenge.ui.MainActivity
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.coroutines.*
@@ -28,6 +33,10 @@ class GetOptimalShiftWorker(context: Context, params: WorkerParameters): Corouti
         val startTime = inputData.getString("startTime")!!
         val endTime = inputData.getString("endTime")!!
 
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
+        val location = fusedLocationClient.lastLocation.await()
+        val startLoc = "{\"lat\":\"" + location.latitude + "\",\"lon\":\"" + location.longitude + "\"}"
+
         // OrderList取得
         val ordersRepository = OrdersRepository()
         val snapshot = try {
@@ -42,9 +51,6 @@ class GetOptimalShiftWorker(context: Context, params: WorkerParameters): Corouti
             val item = document.toObject(Order::class.java)
             orderList.add(item!!)
         }
-        Timber.d(orderList[2].shop!!.geopoint.toString())
-
-        val startLoc = "{\"lat\":35.483135,\"lon\":139.613108}"
 
         val proposedShift = SearchShift1(startLoc, orderList, startTime, endTime)
         Timber.d("-----------------------------")

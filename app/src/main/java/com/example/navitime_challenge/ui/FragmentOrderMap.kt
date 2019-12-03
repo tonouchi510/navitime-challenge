@@ -11,28 +11,17 @@ import android.webkit.WebViewClient
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.example.navitime_challenge.MainActivity
 import com.example.navitime_challenge.R
 import com.example.navitime_challenge.databinding.FragmentOrdermapBinding
 
 
 class FragmentOrderMap: Fragment() {
 
-    private val TAG = "FragmentOrderMap"
-
     private lateinit var location: Location
     private lateinit var latitudeText: TextView
     private lateinit var longitudeText: TextView
-    private lateinit var mActivity: MainActivity
 
     private lateinit var mapView: WebView
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mActivity = activity as MainActivity
-        location = mActivity.location
-
-    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
