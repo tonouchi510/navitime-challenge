@@ -1,21 +1,19 @@
 package com.example.navitime_challenge.work
 
-import android.app.Notification
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.navitime_challenge.R
-import com.example.navitime_challenge.database.getDatabase
 import com.example.navitime_challenge.domain.Order
+import com.example.navitime_challenge.domain.Route
+import com.example.navitime_challenge.network.NavitimeApi
+import com.example.navitime_challenge.network.asDomainModel
 import com.example.navitime_challenge.repository.OrdersRepository
-import com.example.navitime_challenge.repository.RouteRepository
-import com.example.navitime_challenge.ui.MainActivity
-import retrofit2.HttpException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.FirebaseFirestoreException
+import kotlinx.coroutines.*
 import timber.log.Timber
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 
 class GetOptimalShiftWorker(context: Context, params: WorkerParameters): CoroutineWorker(context, params)  {
@@ -25,66 +23,90 @@ class GetOptimalShiftWorker(context: Context, params: WorkerParameters): Corouti
     }
 
     override suspend fun doWork(): Result {
+        Timber.d("doWork!")
+
+        val startTime = inputData.getString("startTime")!!
+        val endTime = inputData.getString("endTime")!!
+
+        // OrderList取得
         val ordersRepository = OrdersRepository()
-        ordersRepository.getSavedOrders().get()
-            .addOnSuccessListener { documemts ->
-                val orders: MutableList<Order> = mutableListOf()
-                for (doc in documemts) {
-                    val item = doc.toObject(Order::class.java)
-                    orders.add(item)
-                }
-            }
-            .addOnFailureListener { exception ->
-                Timber.d("Error getting documents: ", exception)
-            }
-
-        val database = getDatabase(applicationContext)
-        val routeRepository = RouteRepository(database)
-
-        try {
-            routeRepository.refreshRoutes()
-            Timber.d("WorkManager: Work request for sync is run")
-        } catch (e: HttpException) {
-            return Result.retry()
+        val snapshot = try {
+            ordersRepository.getSavedOrders().get().await()
+        } catch (e: FirebaseFirestoreException) {
+            // Handle exception
+            Timber.e(e.message)
+            return Result.failure()
         }
+        val orderList: MutableList<Order> = mutableListOf()
+        for (document in snapshot.documents) {
+            val item = document.toObject(Order::class.java)
+            orderList.add(item!!)
+        }
+        Timber.d(orderList[2].shop!!.geopoint.toString())
 
-        val pendingIntent = PendingIntent.getActivity(applicationContext,
-            0,
-            Intent(applicationContext, MainActivity::class.java), PendingIntent.FLAG_ONE_SHOT)
+        val startLoc = "{\"lat\":35.483135,\"lon\":139.613108}"
 
-        val notification = NotificationCompat.Builder(applicationContext, "default")
-            .setContentTitle(routeRepository.routes.value?.get(0)?.name)
-            .setContentText(routeRepository.routes.value.toString())
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentIntent(pendingIntent)
-            .setDefaults(Notification.DEFAULT_VIBRATE)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .build()
-
-        NotificationManagerCompat.from(applicationContext).notify(1, notification)
+        val proposedShift = SearchShift1(startLoc, orderList, startTime, endTime)
+        Timber.d("-----------------------------")
+        Timber.d(proposedShift.toString())
+        Timber.d("-----------------------------")
 
         return Result.success()
     }
 
-    /*
+    suspend fun SearchShift1(startLoc: String, orderList: MutableList<Order>,
+                             startTime: String, endTime: String): List<Route>? {
+        Timber.d("Get Optimal Shift by algorithm-1")
+        val groupedOrder = orderList.groupBy { it.shop!!.name }
+        val selectedOrders = groupedOrder.values.maxBy { v -> v.size } ?: return null
 
-    /** Authorizes the installed application to access user's protected data.  */
-    @Throws(Exception::class)
-    private fun authorize(): Credential {
-        // load client secrets
-        val clientSecrets = GoogleClientSecrets.load(
-            JSON_FACTORY,
-            InputStreamReader(CalendarSample::class.java!!.getResourceAsStream("/client_secrets.json"))
-        )
-        // set up authorization code flow
-        val flow = GoogleAuthorizationCodeFlow.Builder(
-            httpTransport, JSON_FACTORY, clientSecrets,
-            Collections.singleton(CalendarScopes.CALENDAR)
-        ).setDataStoreFactory(dataStoreFactory)
-            .build()
-        // authorize
-        return AuthorizationCodeInstalledApp(flow, LocalServerReceiver()).authorize("user")
+        val shop = "{\"lat\":\"" + selectedOrders[0].shop!!.geopoint!!.latitude +
+                "\",\"lon\":\"" + selectedOrders[0].shop!!.geopoint!!.longitude + "\"}"
+
+        val via = selectedOrders.map { order ->
+            val geopoint = order.user_info!!.geopoint!!
+            "{\"lat\":\"" + geopoint.latitude + "\",\"lon\":\"" + geopoint.longitude + "\",\"stay-time\":\"5\"}"
+        }
+        Timber.d(via.toString())
+
+        val routeList = NavitimeApi.service.getOptimalShift(
+            start = startLoc,
+            shop = shop,
+            via = via.toString(),
+            starttime = startTime,
+            endtime = endTime
+        ).await()
+
+        return routeList.asDomainModel()
     }
 
-     */
+    suspend fun <T> Task<T>.await(): T {
+        // fast path
+        if (isComplete) {
+            val e = exception
+            return if (e == null) {
+                if (isCanceled) {
+                    throw CancellationException("Task $this was cancelled normally.")
+                } else {
+                    @Suppress("UNCHECKED_CAST")
+                    result as T
+                }
+            } else {
+                throw e
+            }
+        }
+
+        return suspendCancellableCoroutine { cont ->
+            addOnCompleteListener {
+                val e = exception
+                if (e == null) {
+                    @Suppress("UNCHECKED_CAST")
+                    if (isCanceled) cont.cancel() else cont.resume(result as T)
+                } else {
+                    cont.resumeWithException(e)
+                }
+            }
+        }
+    }
+
 }
