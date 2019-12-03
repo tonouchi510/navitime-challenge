@@ -38,6 +38,7 @@ import com.google.android.material.tabs.TabLayout
 
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.navitime_challenge.network.GoogleAuthApi
 import com.example.navitime_challenge.network.GoogleCalendarApi
 import com.example.navitime_challenge.ui.FragmentCalendarTest
 import com.google.android.gms.auth.api.Auth
@@ -47,6 +48,7 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener
+import com.google.android.gms.common.api.Scope
 
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -84,8 +86,8 @@ class MainActivity : AppCompatActivity(), OnConnectionFailedListener {
         // Add fragments
         adapter.addFragment(FragmentHome(), "Home")
         adapter.addFragment(FragmentOrderList(), "OrderList")
-        //adapter.addFragment(FragmentOrderMap(), "OrderMap")
-        adapter.addFragment(FragmentCalendarTest(), "CalendarTest")
+        adapter.addFragment(FragmentOrderMap(), "OrderMap")
+        //adapter.addFragment(FragmentCalendarTest(), "CalendarTest")
 
         viewPager.adapter = adapter
         tabLayout.setupWithViewPager(pager)
@@ -98,6 +100,7 @@ class MainActivity : AppCompatActivity(), OnConnectionFailedListener {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("212813157070-cg70au51ob4fk4bvo89mt783bvvhkhkf.apps.googleusercontent.com")
             .requestServerAuthCode("212813157070-cg70au51ob4fk4bvo89mt783bvvhkhkf.apps.googleusercontent.com")
+            .requestScopes(Scope("https://www.googleapis.com/auth/calendar"))
             .requestEmail()
             .build()
 
@@ -106,12 +109,15 @@ class MainActivity : AppCompatActivity(), OnConnectionFailedListener {
             .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
             .build()
 
+        /*
         buttonServiceStart.setOnClickListener {
             //startWorker()
             val signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient)
             startActivityForResult(signInIntent, REQUEST_PERMISSIONS_REQUEST_CODE)
 
         }
+
+         */
 
     }
 
@@ -285,6 +291,7 @@ class MainActivity : AppCompatActivity(), OnConnectionFailedListener {
                 Log.w(TAG, "id_token:" + idToken)
                 Log.w(TAG, "auth code:"+ authCode)
 
+
                 /*
                 val transport = GoogleNetHttpTransport.newTrustedTransport()
                 val jsonFactory = JacksonFactory.getDefaultInstance()
@@ -302,17 +309,4 @@ class MainActivity : AppCompatActivity(), OnConnectionFailedListener {
             }
         }
     }
-
-    /*
-    private fun handleSignInResult(result : GoogleSignInResult) {
-      Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-      if (result.isSuccess()) {
-          // Signed in successfully, show authenticated UI.
-          val acct : GoogleSignInAccount? = result.getSignInAccount();
-      } else {
-          // Signed out, show unauthenticated UI.
-      }
-  }
-     */
-
 }

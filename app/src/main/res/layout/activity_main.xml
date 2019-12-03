@@ -11,12 +11,6 @@
 
 
 
-        <Button
-            android:id="@+id/buttonServiceStart"
-            android:layout_width="261dp"
-            android:layout_height="125dp"
-            android:text="チャネル設定通知" />
-
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
