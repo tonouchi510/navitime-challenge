@@ -4,8 +4,7 @@ import android.app.Application
 import android.os.Build
 import androidx.work.*
 
-import com.example.navitime_challenge.work.GetOptimalShiftWorker
-import com.example.navitime_challenge.work.RefreshTokenWorker
+import com.example.navitime_challenge.work.GetFreeTimeWorker
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,33 +55,16 @@ class NavitimeApplication : Application() {
             }
             .build()
 
-
-        Timber.d("WorkManager: One time Work request")
-        val refreshTokenWorkerPayload = workDataOf("clientID" to getString(R.string.default_web_client_id))
-        val refreshTokenWorker = PeriodicWorkRequestBuilder<RefreshTokenWorker>(1, TimeUnit.HOURS)
-            .setInputData(refreshTokenWorkerPayload)
-            .build()
-        WorkManager.getInstance().enqueueUniquePeriodicWork(
-            RefreshTokenWorker.WORK_NAME,
-            ExistingPeriodicWorkPolicy.KEEP,
-            refreshTokenWorker)
-
         Timber.d("WorkManager: Periodic Work request for sync is scheduled")
-        val repeatingRequest = PeriodicWorkRequestBuilder<GetOptimalShiftWorker>(3, TimeUnit.HOURS)
-            .setConstraints(constraints)
+        val getFreeTimeWorkerPayload = workDataOf("clientID" to getString(R.string.default_web_client_id))
+        val getFreeTimeWorker = PeriodicWorkRequestBuilder<GetFreeTimeWorker>(1, TimeUnit.MINUTES)
+            .setInputData(getFreeTimeWorkerPayload)
             .build()
+
         WorkManager.getInstance().enqueueUniquePeriodicWork(
-            GetOptimalShiftWorker.WORK_NAME,
+            GetFreeTimeWorker.WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
-            repeatingRequest)
+            getFreeTimeWorker)
     }
 
-    fun setAuthUser(account: GoogleSignInAccount) {
-        user = account
-        Timber.d(user.id)
-    }
-
-    fun setAccessToken(token: String) {
-        accessToken = token
-    }
 }
