@@ -20,10 +20,6 @@ interface GoogleCalendarApiService {
     fun getCalendarId(): Deferred<GoogleCalendarContainer>
 }
 
-
-/**
- * Main entry point for network access. Call like `GoogleCalendarApi.order.getOptimalShift()`
- */
 object GoogleCalendarApi {
 
     // Configure retrofit to parse JSON and use coroutines
