@@ -65,6 +65,7 @@ dependencies {
     def coroutines = "1.0.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines"
 
     // retrofit for networking
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'

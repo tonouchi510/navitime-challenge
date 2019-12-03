@@ -1,17 +1,13 @@
 package com.example.navitime_challenge.work
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.navitime_challenge.R
 import com.example.navitime_challenge.domain.Order
 import com.example.navitime_challenge.domain.Route
 import com.example.navitime_challenge.network.NavitimeApi
 import com.example.navitime_challenge.network.asDomainModel
 import com.example.navitime_challenge.repository.OrdersRepository
-import com.example.navitime_challenge.ui.MainActivity
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestoreException
