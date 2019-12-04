@@ -22,7 +22,6 @@ interface NavitimeApiService {
         @Query("start") start: String,
         @Query("shop") shop: String,
         @Query("starttime") starttime: String,
-        @Query("endtime") endtime: String,
         @Query("via") via: String
     ): Deferred<NavitimeRouteContainer>
 }

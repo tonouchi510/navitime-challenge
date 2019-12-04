@@ -62,13 +62,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     start = "{\"lat\":35.706822,\"lon\":139.813956}",
                     shop = "{\"lat\":35.655392,\"lon\":139.748642}",
                     starttime = "2018-05-01T13:00",
-                    endtime = "2018-05-01T15:55",
                     via = "[{\"name\":\"東京都台東区秋葉原\",\"lat\":\"35.702069\",\"lon\":\"139.775327\",\"stay-time\":\"30\"},{\"name\":\"代々木公園\",\"lat\":\"35.662141\",\"lon\":\"139.771023\",\"spot\":\"02301-1300514\"},{\"stay-time\":\"30\",\"name\":\"東京\",\"node\":\"00006668\"}]"
                 )
                 routeRepository.refreshRoutes(p)
+                Timber.d(routes.toString())
                 _eventNetworkError.value = false
                 _isNetworkErrorShown.value = false
-                Timber.d(routes.value.toString())
 
             } catch (networkError: IOException) {
                 // Show a Toast error message and hide the progress bar.

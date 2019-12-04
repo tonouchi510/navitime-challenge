@@ -31,13 +31,14 @@ class GetOptimalShiftWorker(context: Context, params: WorkerParameters): Corouti
     override suspend fun doWork(): Result {
         Timber.d("doWork!")
 
+        // 空き時間
         val startTime = inputData.getString("startTime")!!
         val endTime = inputData.getString("endTime")!!
 
+        // 現在地のgeopoint取得
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
         val location = fusedLocationClient.lastLocation.await()
-        val startLoc1 = "{\"lat\":" + location.latitude + ",\"lon\":" + location.longitude + "}"
-        val startLoc = "{\"lat\":" + 35.474178 + ",\"lon\":" + 139.589868 + "}"
+        val startLoc = "{\"lat\":" + location.latitude + ",\"lon\":" + location.longitude + "}"
 
         // OrderList取得
         val ordersRepository = OrdersRepository()
@@ -54,8 +55,8 @@ class GetOptimalShiftWorker(context: Context, params: WorkerParameters): Corouti
             orderList.add(item!!)
         }
 
+        // シフト探索
         val result = SearchShift1(startLoc, orderList, startTime, endTime)
-
         Timber.d("-----------------------------")
         Timber.d(result.second.toString() + "件配達のシフトがあります。")
         Timber.d("-----------------------------")
@@ -91,8 +92,7 @@ class GetOptimalShiftWorker(context: Context, params: WorkerParameters): Corouti
                 start = startLoc,
                 shop = shop,
                 via = via.toString(),
-                starttime = startTime,
-                endtime = endTime
+                starttime = startTime
             ).await()
 
             val goalTime = routeList.goaltime
