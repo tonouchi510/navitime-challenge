@@ -3,16 +3,21 @@ package com.example.navitime_challenge.work
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.navitime_challenge.database.getRouteDatabase
 import com.example.navitime_challenge.domain.Order
 import com.example.navitime_challenge.domain.Route
 import com.example.navitime_challenge.network.NavitimeApi
+import com.example.navitime_challenge.network.NavitimeRouteContainer
 import com.example.navitime_challenge.network.asDomainModel
 import com.example.navitime_challenge.repository.OrdersRepository
+import com.example.navitime_challenge.repository.RouteRepository
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.time.LocalDate
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -31,7 +36,8 @@ class GetOptimalShiftWorker(context: Context, params: WorkerParameters): Corouti
 
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
         val location = fusedLocationClient.lastLocation.await()
-        val startLoc = "{\"lat\":\"" + location.latitude + "\",\"lon\":\"" + location.longitude + "\"}"
+        val startLoc1 = "{\"lat\":" + location.latitude + ",\"lon\":" + location.longitude + "}"
+        val startLoc = "{\"lat\":" + 35.474178 + ",\"lon\":" + 139.589868 + "}"
 
         // OrderList取得
         val ordersRepository = OrdersRepository()
@@ -48,38 +54,56 @@ class GetOptimalShiftWorker(context: Context, params: WorkerParameters): Corouti
             orderList.add(item!!)
         }
 
-        val proposedShift = SearchShift1(startLoc, orderList, startTime, endTime)
+        val result = SearchShift1(startLoc, orderList, startTime, endTime)
+
         Timber.d("-----------------------------")
-        Timber.d(proposedShift.toString())
+        Timber.d(result.second.toString() + "件配達のシフトがあります。")
         Timber.d("-----------------------------")
 
         return Result.success()
     }
 
     suspend fun SearchShift1(startLoc: String, orderList: MutableList<Order>,
-                             startTime: String, endTime: String): List<Route>? {
+                             startTime: String, endTime: String): Pair<List<Route>, Int> {
         Timber.d("Get Optimal Shift by algorithm-1")
-        val groupedOrder = orderList.groupBy { it.shop!!.name }
-        val selectedOrders = groupedOrder.values.maxBy { v -> v.size } ?: return null
+        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+        val groupedOrder = orderList.groupBy { it.shop!!.name }.toMutableMap()
 
-        val shop = "{\"lat\":\"" + selectedOrders[0].shop!!.geopoint!!.latitude +
-                "\",\"lon\":\"" + selectedOrders[0].shop!!.geopoint!!.longitude + "\"}"
+        var routeList: NavitimeRouteContainer
+        var selectedOrders: List<Order>
 
-        val via = selectedOrders.map { order ->
-            val geopoint = order.user_info!!.geopoint!!
-            "{\"lat\":\"" + geopoint.latitude + "\",\"lon\":\"" + geopoint.longitude + "\",\"stay-time\":\"5\"}"
+        while (true) {
+            selectedOrders = groupedOrder.values.maxBy { v -> v.size }!!
+
+            val shop = "{\"name\":\"" + selectedOrders[0].shop!!.name +
+                    "\",\"lat\":\"" + selectedOrders[0].shop!!.geopoint!!.latitude +
+                    "\",\"lon\":\"" + selectedOrders[0].shop!!.geopoint!!.longitude + "\"}"
+
+            val via = selectedOrders.map { order ->
+                val geopoint = order.user_info!!.geopoint!!
+                "{\"name\":\"" + order.user_info.address +
+                        "\",\"lat\":\"" + geopoint.latitude +
+                        "\",\"lon\":\"" + geopoint.longitude +
+                        "\",\"stay-time\":\"5\"}"
+            }
+
+            routeList = NavitimeApi.service.getOptimalShift(
+                start = startLoc,
+                shop = shop,
+                via = via.toString(),
+                starttime = startTime,
+                endtime = endTime
+            ).await()
+
+            val goalTime = routeList.goaltime
+            Timber.d(goalTime)
+
+            if (df.parse(goalTime)!! < df.parse(endTime)) break
+            groupedOrder.remove(selectedOrders[0].shop!!.name)
+
         }
-        Timber.d(via.toString())
+        return Pair(routeList.asDomainModel(), selectedOrders.size)
 
-        val routeList = NavitimeApi.service.getOptimalShift(
-            start = startLoc,
-            shop = shop,
-            via = via.toString(),
-            starttime = startTime,
-            endtime = endTime
-        ).await()
-
-        return routeList.asDomainModel()
     }
 
     suspend fun <T> Task<T>.await(): T {
