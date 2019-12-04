@@ -26,7 +26,6 @@ class RouteRepository(private val database: RoutesDatabase) {
                 start = payload.start,
                 shop = payload.shop,
                 starttime = payload.starttime,
-                endtime = payload.endtime,
                 via = payload.via
             ).await()
             database.routeDao.insertAll(routelist.asDatabaseModel())

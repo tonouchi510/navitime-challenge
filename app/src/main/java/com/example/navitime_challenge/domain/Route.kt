@@ -24,6 +24,5 @@ data class RoutePayload(
     val start: String,
     val shop: String,
     val starttime: String,
-    val endtime: String,
     val via: String
 )
