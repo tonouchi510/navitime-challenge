@@ -8,7 +8,9 @@ import com.example.navitime_challenge.domain.GoogleAuthPayload
 import com.example.navitime_challenge.network.GoogleCalendarApi
 import com.example.navitime_challenge.repository.GoogleAuthRepository
 import timber.log.Timber
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
@@ -22,6 +24,7 @@ class GetFreeTimeWorker(context: Context, params: WorkerParameters): CoroutineWo
     override suspend fun doWork(): Result {
         Timber.d("Start RefreshTokenWorker")
 
+        /*
         val repository = GoogleAuthRepository(getGoogleAuthDatabase(applicationContext))
         val clientID = inputData.getString("clientID")
 
@@ -31,26 +34,83 @@ class GetFreeTimeWorker(context: Context, params: WorkerParameters): CoroutineWo
             grantType = "refresh_token",
             code = null
         )
-        //val accessToken = repository.refreshAccessToken(p)
-        val accessToken = "Bearer ya29.ImCzBxvcCulvcIhT41UtGQxqt-AK1Qg2Vt1VKlhBPKYQ5NJDrm_o1GkefoXzkUVK-_5_BD_gh6A2FX03i3JPg8gL6rYdWGCyW8rTfEOCVqilIlLVQUWsrgtT9SfAPHR0ZnQ"
+        val accessToken = repository.refreshAccessToken(p)
+
+         */
+
+        val accessToken = "Bearer ya29.ImC0B7hJ7ccz52S6VxUA-DzGwHVCC2UXJ03xBXobBOO4bwCGCxZ3G3JO_Q1DoFTIA4pt7aQCHltcjtuCssrx2sGUSkeMm7KOjZZ4ZNS4IkJTDlIs5DjQc3fhT3HBSCit-aw"
         Timber.d(accessToken)
 
-        //val response = GoogleCalendarApi.service.getEvents(accessToken, "navitime.challenge.user@gmail.com").await()
-        //Timber.d(response.toString())
-
         // formatter
+        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
         val f1 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val f2 = DateTimeFormatter.ofPattern("HH:mm")
 
         var date = LocalDateTime.now()
-        val startTime = date.format(f1) + "T" + date.format(f2)
-        date = date.plusHours(1)
-        val endTime = date.format(f1) + "T" + date.format(f2)
+        val timeMax = date.format(f1) + "T" + date.format(f2)
+        date = date.plusDays(1)
+        val timeMin = date.format(f1) + "T" + date.format(f2)
+
+
+        val response = GoogleCalendarApi.service.getEvents(
+            accessToken = accessToken,
+            calendarId = "tonouchi27@gmail.com",
+            orderBy = "startTime",
+            timeMax = timeMax,
+            timeMin = timeMin).await()
+
+        val events = response.items
+        Timber.d(events.toString())
+
+        /*
+        // 空き時間候補を取得
+        var startTime = date
+        val startTimes = mutableListOf<LocalDateTime>()
+        val endTimes = mutableListOf<LocalDateTime>()
+        var i = 0
+        while (i < events.size) {
+            if (i != 0) {
+                startTime = LocalDateTime.ofInstant(
+                    df.parse(events[i - 1].end.dateTime ?: events[i - 1].end.date!!)!!.toInstant(),
+                    ZoneId.systemDefault())
+            }
+
+            val endTime = LocalDateTime.ofInstant(
+                df.parse(events[i].start.dateTime ?: events[i].start.date!!)!!.toInstant(),
+                ZoneId.systemDefault())
+
+            if (diffDateTime(startTime, endTime) > 40) {
+                // 40分以上の空きがあれば
+                startTimes.add(startTime)
+                endTimes.add(endTime)
+            }
+
+            i++
+        }
+
+        i = 0
+        while (i < startTimes.size) {
+            val delayTime = diffDateTime(date, startTimes[i])
+            val getOptimalShiftWorkerPayload = workDataOf(
+                "startTime" to startTimes[i],
+                "endTime" to endTimes[i]
+            )
+            val getOptimalShiftWorker = OneTimeWorkRequestBuilder<GetOptimalShiftWorker>()
+                .setInputData(getOptimalShiftWorkerPayload)
+                .setInitialDelay(delayTime.toLong(), TimeUnit.SECONDS)
+                .build()
+
+            Timber.d("WorkManager: OneTime Work request is scheduled")
+            WorkManager.getInstance().enqueue(getOptimalShiftWorker)
+
+            i++
+        }
+        */
 
         val getOptimalShiftWorkerPayload = workDataOf(
-            "startTime" to startTime,
-            "endTime" to endTime
-            )
+            "startTime" to timeMax,
+            "endTime" to timeMin
+        )
         val getOptimalShiftWorker = OneTimeWorkRequestBuilder<GetOptimalShiftWorker>()
             .setInputData(getOptimalShiftWorkerPayload)
             .setInitialDelay(20, TimeUnit.SECONDS)
@@ -59,7 +119,16 @@ class GetFreeTimeWorker(context: Context, params: WorkerParameters): CoroutineWo
         Timber.d("WorkManager: OneTime Work request is scheduled")
         WorkManager.getInstance().enqueue(getOptimalShiftWorker)
 
+
         return Result.success()
+    }
+
+    private fun diffDateTime(a: LocalDateTime, b: LocalDateTime): Int {
+        if (b.dayOfMonth > a.dayOfMonth) {
+            return (24 + b.hour - a.hour) * 60 + (b.minute - a.minute)
+        } else {
+            return (b.hour - a.hour) * 60 + (b.minute - a.minute)
+        }
     }
 
 }
