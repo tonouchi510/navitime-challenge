@@ -71,8 +71,8 @@ class NavitimeApplication : Application() {
 
     private fun createNotificationChannel() {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val name = "通知のタイトル的情報を設定"
-        val id = "notification_work"
+        val name = "シフト提案の通知"
+        val id = "default"
         val notifyDescription = "この通知の詳細情報を設定します"
 
         if (manager.getNotificationChannel(id) == null) {
