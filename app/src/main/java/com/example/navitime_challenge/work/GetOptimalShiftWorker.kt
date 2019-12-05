@@ -1,13 +1,11 @@
 package com.example.navitime_challenge.work
 
 import android.app.Notification
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.navitime_challenge.R
@@ -23,6 +21,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.lang.IllegalArgumentException
 import java.text.SimpleDateFormat
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -64,9 +63,7 @@ class GetOptimalShiftWorker(context: Context, params: WorkerParameters): Corouti
         // シフト探索
         val result = SearchShift1(startLoc, orderList, startTime, endTime)
         shiftNotify(result.second.toString() + "件配達のシフトがあります。")
-        Timber.d("-----------------------------")
         Timber.d(result.second.toString() + "件配達のシフトがあります。")
-        Timber.d("-----------------------------")
 
         return Result.success()
     }
