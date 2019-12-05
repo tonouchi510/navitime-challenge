@@ -1,11 +1,13 @@
 package com.example.navitime_challenge
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.os.Build
 import androidx.work.*
 
 import com.example.navitime_challenge.work.GetFreeTimeWorker
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,8 +20,6 @@ import java.util.concurrent.TimeUnit
 class NavitimeApplication : Application() {
 
     private val applicationScope = CoroutineScope(Dispatchers.Default)
-    private lateinit var user: GoogleSignInAccount
-    private lateinit var accessToken: String
 
     /**
      * onCreate is called before the first screen is shown to the user.
@@ -55,6 +55,8 @@ class NavitimeApplication : Application() {
             }
             .build()
 
+        createNotificationChannel()
+
         Timber.d("WorkManager: Periodic Work request for sync is scheduled")
         val getFreeTimeWorkerPayload = workDataOf("clientID" to getString(R.string.default_web_client_id))
         val getFreeTimeWorker = PeriodicWorkRequestBuilder<GetFreeTimeWorker>(1, TimeUnit.MINUTES)
@@ -65,6 +67,22 @@ class NavitimeApplication : Application() {
             GetFreeTimeWorker.WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
             getFreeTimeWorker)
+    }
+
+    private fun createNotificationChannel() {
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val name = "通知のタイトル的情報を設定"
+        val id = "notification_work"
+        val notifyDescription = "この通知の詳細情報を設定します"
+
+        if (manager.getNotificationChannel(id) == null) {
+            val channel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH)
+            channel.apply {
+                description = notifyDescription
+            }
+            manager.createNotificationChannel(channel)
+        }
+
     }
 
 }
