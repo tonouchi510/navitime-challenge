@@ -59,7 +59,7 @@ class NavitimeApplication : Application() {
 
         Timber.d("WorkManager: Periodic Work request for sync is scheduled")
         val getFreeTimeWorkerPayload = workDataOf("clientID" to getString(R.string.default_web_client_id))
-        val getFreeTimeWorker = PeriodicWorkRequestBuilder<GetFreeTimeWorker>(1, TimeUnit.MINUTES)
+        val getFreeTimeWorker = PeriodicWorkRequestBuilder<GetFreeTimeWorker>(6, TimeUnit.HOURS)
             .setInputData(getFreeTimeWorkerPayload)
             .build()
 

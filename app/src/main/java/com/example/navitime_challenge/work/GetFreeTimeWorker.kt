@@ -38,7 +38,7 @@ class GetFreeTimeWorker(context: Context, params: WorkerParameters): CoroutineWo
 
          */
 
-        val accessToken = "Bearer ya29.ImC0B7hJ7ccz52S6VxUA-DzGwHVCC2UXJ03xBXobBOO4bwCGCxZ3G3JO_Q1DoFTIA4pt7aQCHltcjtuCssrx2sGUSkeMm7KOjZZ4ZNS4IkJTDlIs5DjQc3fhT3HBSCit-aw"
+        val accessToken = "Bearer ya29.ImC0BylGeVMbnCwSTIYH1QgeGaX9Hu3K02w0XoanRYyxENCrSfZ9obfZv006mhipuFb26pX714GV8ZABVXRpN04rIT6C2lv2Yr5Zkv5-55h4IjWQ6muBM8ud_HNytIkAFA0"
         Timber.d(accessToken)
 
         // formatter
@@ -54,15 +54,11 @@ class GetFreeTimeWorker(context: Context, params: WorkerParameters): CoroutineWo
 
         val response = GoogleCalendarApi.service.getEvents(
             accessToken = accessToken,
-            calendarId = "tonouchi27@gmail.com",
-            orderBy = "startTime",
-            timeMax = timeMax,
-            timeMin = timeMin).await()
+            calendarId = "tonouchi27@gmail.com").await()
 
         val events = response.items
         Timber.d(events.toString())
 
-        /*
         // 空き時間候補を取得
         var startTime = date
         val startTimes = mutableListOf<LocalDateTime>()
@@ -87,7 +83,10 @@ class GetFreeTimeWorker(context: Context, params: WorkerParameters): CoroutineWo
 
             i++
         }
+        Timber.d(startTimes.toString())
+        Timber.d(endTimes.toString())
 
+        /*
         i = 0
         while (i < startTimes.size) {
             val delayTime = diffDateTime(date, startTimes[i])
@@ -97,7 +96,7 @@ class GetFreeTimeWorker(context: Context, params: WorkerParameters): CoroutineWo
             )
             val getOptimalShiftWorker = OneTimeWorkRequestBuilder<GetOptimalShiftWorker>()
                 .setInputData(getOptimalShiftWorkerPayload)
-                .setInitialDelay(delayTime.toLong(), TimeUnit.SECONDS)
+                .setInitialDelay(delayTime.toLong(), TimeUnit.MINUTES)
                 .build()
 
             Timber.d("WorkManager: OneTime Work request is scheduled")
