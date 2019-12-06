@@ -4,10 +4,7 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import kotlinx.coroutines.Deferred
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.Field
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
+import retrofit2.http.*
 
 
 /**
@@ -18,10 +15,7 @@ interface GoogleCalendarApiService {
 
     @GET("calendars/{calendarId}/events")
     fun getEvents(@Header( "Authorization") accessToken: String,
-                  @Path("calendarId") calendarId: String,
-                  @Field("orderBy") orderBy: String,
-                  @Field("timeMax") timeMax: String,
-                  @Field("timeMin") timeMin: String): Deferred<GoogleCalendarContainer>
+                  @Path("calendarId") calendarId: String): Deferred<GoogleCalendarContainer>
 }
 
 

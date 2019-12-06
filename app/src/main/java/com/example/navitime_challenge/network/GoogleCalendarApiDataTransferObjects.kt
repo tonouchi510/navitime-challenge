@@ -1,7 +1,5 @@
 package com.example.navitime_challenge.network
 
-import com.google.api.client.util.DateTime
-import com.google.api.services.calendar.Calendar
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
