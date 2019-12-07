@@ -22,6 +22,8 @@ class RouteRepository(private val database: RoutesDatabase) {
     suspend fun refreshRoutes(payload: RoutePayload) {
         withContext(Dispatchers.IO) {
             Timber.d("refresh routes of optimal shift is called")
+            database.routeDao.clear()
+
             val routelist = NavitimeApi.service.getOptimalShift(
                 start = payload.start,
                 shop = payload.shop,
