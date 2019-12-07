@@ -22,18 +22,18 @@ class GoogleAuthRepository(private val database: GoogleAuthDatabase) {
                 code = payload.code!!
             ).await()
 
-            database.authDao.insertRefreshToken(response.asDatabaseModel())
+            Timber.d(response.toString())
+
+            if (response.refreshToken != null) {
+                database.authDao.insertRefreshToken(response.asDatabaseModel())
+                Timber.d(database.authDao.getRefreshToken().token)
+            }
         }
     }
 
-    suspend fun refreshAccessToken(payload: GoogleAuthPayload): String? {
+    suspend fun refreshAccessToken(payload: GoogleAuthPayload): String {
         Timber.d("refresh access token by refresh token")
         val refreshToken = database.authDao.getRefreshToken()
-
-        if (refreshToken == null) {
-            Timber.d("RefreshToken: null")
-            return null
-        }
 
         val response = GoogleAuth.authService.refreshAccessToken(
             clientId = payload.clientId,

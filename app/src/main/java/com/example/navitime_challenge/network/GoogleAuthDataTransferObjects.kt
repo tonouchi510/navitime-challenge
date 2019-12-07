@@ -9,7 +9,7 @@ import com.squareup.moshi.JsonClass
 data class GoogleAuthContainer(
     @Json(name = "access_token") val accessToken: String,
     @Json(name = "expires_in") val expiresIn: Int,
-    @Json(name = "refresh_token") val refreshToken: String = "",
+    @Json(name = "refresh_token") val refreshToken: String?,
     @Json(name = "scope") val scope: String?,
     @Json(name = "token_type") val tokenType: String,
     @Json(name = "id_token") val idToken: String?)
@@ -24,6 +24,6 @@ fun GoogleAuthContainer.asDomainModel(): Token {
 fun GoogleAuthContainer.asDatabaseModel(): DatabaseAuth {
     return DatabaseAuth(
         id = "111111111",
-        token = refreshToken
+        token = refreshToken!!
     )
 }
