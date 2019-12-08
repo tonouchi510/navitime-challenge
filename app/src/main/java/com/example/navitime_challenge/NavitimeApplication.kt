@@ -1,10 +1,13 @@
 package com.example.navitime_challenge
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.os.Build
 import androidx.work.*
 
-import com.example.navitime_challenge.work.GetOptimalShiftWorker
+import com.example.navitime_challenge.work.GetFreeTimeWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,14 +55,34 @@ class NavitimeApplication : Application() {
             }
             .build()
 
-        val repeatingRequest = PeriodicWorkRequestBuilder<GetOptimalShiftWorker>(1, TimeUnit.DAYS)
-            .setConstraints(constraints)
-            .build()
+        createNotificationChannel()
 
         Timber.d("WorkManager: Periodic Work request for sync is scheduled")
+        val getFreeTimeWorkerPayload = workDataOf("clientID" to getString(R.string.default_web_client_id))
+        val getFreeTimeWorker = PeriodicWorkRequestBuilder<GetFreeTimeWorker>(6, TimeUnit.HOURS)
+            .setInputData(getFreeTimeWorkerPayload)
+            .build()
+
         WorkManager.getInstance().enqueueUniquePeriodicWork(
-            GetOptimalShiftWorker.WORK_NAME,
+            GetFreeTimeWorker.WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
-            repeatingRequest)
+            getFreeTimeWorker)
     }
+
+    private fun createNotificationChannel() {
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val name = "シフト提案の通知"
+        val id = "default"
+        val notifyDescription = "この通知の詳細情報を設定します"
+
+        if (manager.getNotificationChannel(id) == null) {
+            val channel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH)
+            channel.apply {
+                description = notifyDescription
+            }
+            manager.createNotificationChannel(channel)
+        }
+
+    }
+
 }

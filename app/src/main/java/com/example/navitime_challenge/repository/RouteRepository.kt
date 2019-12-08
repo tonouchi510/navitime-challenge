@@ -5,6 +5,7 @@ import androidx.lifecycle.Transformations
 import com.example.navitime_challenge.database.RoutesDatabase
 import com.example.navitime_challenge.database.asDomainModel
 import com.example.navitime_challenge.domain.Route
+import com.example.navitime_challenge.domain.RoutePayload
 import com.example.navitime_challenge.network.NavitimeApi
 import com.example.navitime_challenge.network.asDatabaseModel
 import kotlinx.coroutines.Dispatchers
@@ -18,10 +19,17 @@ class RouteRepository(private val database: RoutesDatabase) {
         it.asDomainModel()
     }
 
-    suspend fun refreshRoutes() {
+    suspend fun refreshRoutes(payload: RoutePayload) {
         withContext(Dispatchers.IO) {
             Timber.d("refresh routes of optimal shift is called")
-            val routelist = NavitimeApi.service.getOptimalShift().await()
+            database.routeDao.clear()
+
+            val routelist = NavitimeApi.service.getOptimalShift(
+                start = payload.start,
+                shop = payload.shop,
+                starttime = payload.starttime,
+                via = payload.via
+            ).await()
             database.routeDao.insertAll(routelist.asDatabaseModel())
         }
     }

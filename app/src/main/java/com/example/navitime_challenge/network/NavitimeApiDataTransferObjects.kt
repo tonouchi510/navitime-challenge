@@ -7,7 +7,9 @@ import com.squareup.moshi.JsonClass
 import kotlin.random.Random
 
 @JsonClass(generateAdapter = true)
-data class NavitimeRouteContainer(val routes: List<NavitimeRoute>)
+data class NavitimeRouteContainer(
+    val routes: List<NavitimeRoute>,
+    val goaltime: String)
 
 @JsonClass(generateAdapter = true)
 data class NavitimeRoute(
