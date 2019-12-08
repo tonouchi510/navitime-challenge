@@ -8,7 +8,7 @@ import com.example.navitime_challenge.domain.*
 @Entity(tableName = "routes")
 data class DatabaseRoute constructor(
     @PrimaryKey
-    val id: Long,
+    val id: Int,
     val type: String,
     val name: String?,
     val lat: Double?,
@@ -23,6 +23,7 @@ data class DatabaseRoute constructor(
 fun List<DatabaseRoute>.asDomainModel(): List<Route> {
     return map {
         Route(
+            id = it.id,
             type = it.type,
             name = it.name,
             coord = Coord(
