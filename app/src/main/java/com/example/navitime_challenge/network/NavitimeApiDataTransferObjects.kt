@@ -39,7 +39,7 @@ fun NavitimeRouteContainer.asDomainModel(): List<Route> {
 fun NavitimeRouteContainer.asDatabaseModel(): List<DatabaseRoute> {
     return routes.map {
         DatabaseRoute(
-            id = Random.nextLong(10),
+            id = Random.nextLong(1000),
             type = it.type,
             name = it.name,
             lat = it.coord?.lat,

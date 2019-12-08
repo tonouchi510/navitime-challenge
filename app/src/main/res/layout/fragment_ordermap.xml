@@ -4,26 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.FragmentOrderMap">
 
-    <FrameLayout
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical"
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.navitime_challenge.viewmodel.OrderMapViewModel" />
+
+    </data>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginStart="8dp"
+        android:padding="10dp" >
 
-        <LinearLayout
+        <WebView
+            android:id="@+id/map_webview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_marginStart="8dp" >
+            android:layout_height="match_parent" />
 
-            <WebView
-                android:id="@+id/map_webview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </LinearLayout>
-
-
-    </FrameLayout>
+    </LinearLayout>
 
 </layout>
