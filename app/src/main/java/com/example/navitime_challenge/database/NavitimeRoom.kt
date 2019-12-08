@@ -25,7 +25,7 @@ abstract class RoutesDatabase: RoomDatabase() {
 
 private lateinit var INSTANCE: RoutesDatabase
 
-fun getDatabase(context: Context): RoutesDatabase {
+fun getRouteDatabase(context: Context): RoutesDatabase {
     synchronized(RoutesDatabase::class.java) {
         if (!::INSTANCE.isInitialized) {
             INSTANCE = Room.databaseBuilder(context.applicationContext,

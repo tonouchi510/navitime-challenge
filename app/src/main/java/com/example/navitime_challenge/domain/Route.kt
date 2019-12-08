@@ -18,3 +18,11 @@ data class Coord(
     val lat: Double? = null,
     val lon: Double? = null
 )
+
+@IgnoreExtraProperties
+data class RoutePayload(
+    val start: String,
+    val shop: String,
+    val starttime: String,
+    val via: String
+)
