@@ -35,9 +35,15 @@
             android:padding="8sp"
             android:textSize="20sp" />
 
+        <WebView
+            android:id="@+id/shiftMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textSize="12sp"
             android:text="@{viewModel.routes.toString()}" />
 
     </LinearLayout>
