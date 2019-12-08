@@ -4,6 +4,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 data class Route(
+    val id: Int? = null,
     val type: String = "",
     val name: String? = null,
     val coord: Coord? = null,

@@ -13,6 +13,7 @@ data class NavitimeRouteContainer(
 
 @JsonClass(generateAdapter = true)
 data class NavitimeRoute(
+    val id: Int,
     val type: String,
     val name: String?,
     val coord: Coord?,
@@ -25,6 +26,7 @@ data class NavitimeRoute(
 fun NavitimeRouteContainer.asDomainModel(): List<Route> {
     return routes.map {
         Route(
+            id = it.id,
             type = it.type,
             name = it.name,
             coord = it.coord,
@@ -39,7 +41,7 @@ fun NavitimeRouteContainer.asDomainModel(): List<Route> {
 fun NavitimeRouteContainer.asDatabaseModel(): List<DatabaseRoute> {
     return routes.map {
         DatabaseRoute(
-            id = Random.nextLong(1000),
+            id = it.id,
             type = it.type,
             name = it.name,
             lat = it.coord?.lat,
