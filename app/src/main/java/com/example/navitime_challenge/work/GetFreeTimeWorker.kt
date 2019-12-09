@@ -2,15 +2,8 @@ package com.example.navitime_challenge.work
 
 import android.content.Context
 import androidx.work.*
-import com.example.navitime_challenge.R
-import com.example.navitime_challenge.database.getGoogleAuthDatabase
-import com.example.navitime_challenge.domain.GoogleAuthPayload
-import com.example.navitime_challenge.network.GoogleCalendarApi
-import com.example.navitime_challenge.repository.GoogleAuthRepository
 import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
@@ -42,16 +35,15 @@ class GetFreeTimeWorker(context: Context, params: WorkerParameters): CoroutineWo
         Timber.d(accessToken)
 
         // formatter
-        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
         val f1 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val f2 = DateTimeFormatter.ofPattern("HH:mm")
 
         var date = LocalDateTime.now()
         val timeMax = date.format(f1) + "T" + date.format(f2)
-        date = date.plusDays(1)
+        date = date.plusHours(2)
         val timeMin = date.format(f1) + "T" + date.format(f2)
 
-
+        /*
         val response = GoogleCalendarApi.service.getEvents(
             accessToken = accessToken,
             calendarId = "tonouchi27@gmail.com").await()
@@ -86,7 +78,6 @@ class GetFreeTimeWorker(context: Context, params: WorkerParameters): CoroutineWo
         Timber.d(startTimes.toString())
         Timber.d(endTimes.toString())
 
-        /*
         i = 0
         while (i < startTimes.size) {
             val delayTime = diffDateTime(date, startTimes[i])
