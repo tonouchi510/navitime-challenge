@@ -57,19 +57,17 @@ class FragmentHome: Fragment(){
             routes?.apply {
 
                 if (routes.isNotEmpty()) {
-                    Timber.d(routes.toString())
                     var startLoc = ""
                     var start = ""
                     var shop = ""
                     val via = mutableListOf<String>()
                     for (i in 0 until routes.size) {
-                        Timber.d(routes[i].id.toString())
                         if (routes[i].id == 0) {
                             startLoc = "latitude="+routes[i].coord!!.lat+"&longitude="+routes[i].coord!!.lon
                             start = "{\"lat\":" + routes[i].coord!!.lat + ",\"lon\":" + routes[i].coord!!.lon + "}"
                         } else if (routes[i].name == "店舗") {
                             shop = "{\"lat\":" + routes[i].coord!!.lat + ",\"lon\":" + routes[i].coord!!.lon + "}"
-                        } else if (routes[i].name != null) {
+                        } else if (routes[i].name != null && routes[i].name != "現在地") {
                             via.add("{\"lat\":" + routes[i].coord!!.lat + ",\"lon\":" + routes[i].coord!!.lon + "}")
                         }
                     }

@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.navitime_challenge.R
 import com.example.navitime_challenge.databinding.FragmentOrdermapBinding
 import com.example.navitime_challenge.domain.Order
+import com.example.navitime_challenge.domain.Route
 import com.example.navitime_challenge.viewmodel.OrderMapViewModel
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -52,23 +53,36 @@ class FragmentOrderMap: Fragment() {
         super.onActivityCreated(savedInstanceState)
 
 
-        viewModel.getSavedOrdersFromRepository().observe(viewLifecycleOwner, Observer<List<Order>> { orders ->
-            orders?.apply {
-                val orderRoutes = orders.subList(0, 5).map { o ->
-                    "{\"shop\":{\"lat\":"+o.shop!!.geopoint!!.latitude+",\"lon\":"+o.shop.geopoint!!.longitude+"}," +
-                            "\"goal\":{\"lat\":"+o.user_info!!.geopoint!!.latitude+",\"lon\":"+o.user_info.geopoint!!.longitude+"}}"
-                }
-                val f1 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                val f2 = DateTimeFormatter.ofPattern("HH:mm")
-                val date = LocalDateTime.now()
-                val startTime = date.format(f1) + "T" + date.format(f2)
+        viewModel.routeList.observe(viewLifecycleOwner, Observer<List<Route>> { routes ->
+            routes?.apply {
 
-                val startLoc = "latitude=35.477664&longitude=139.622101"
-                val query = startLoc +
-                        "&order=" + orderRoutes.toString() +
-                        "&starttime=" + startTime
-                Timber.d(query)
-                mapView.loadUrl("https://asia-northeast1-navitime-challenge.cloudfunctions.net/getMap?$query")
+                if (routes.isNotEmpty()) {
+                    var startLoc = ""
+                    var shop = ""
+                    var goals = mutableListOf<String>()
+                    for (i in 0 until routes.size) {
+                        if (routes[i].id == 0) {
+                            startLoc =
+                                "latitude=" + routes[i].coord!!.lat + "&longitude=" + routes[i].coord!!.lon
+                        } else if (routes[i].name == "店舗") {
+                            shop =
+                                "{\"lat\":" + routes[i].coord!!.lat + ",\"lon\":" + routes[i].coord!!.lon + "}"
+                        } else if (routes[i].name != null && routes[i].name != "現在地") {
+                            goals.add("{\"lat\":" + routes[i].coord!!.lat + ",\"lon\":" + routes[i].coord!!.lon + "}")
+                        }
+                    }
+                    val f1 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                    val f2 = DateTimeFormatter.ofPattern("HH:mm")
+                    val date = LocalDateTime.now()
+                    val startTime = date.format(f1) + "T" + date.format(f2)
+
+                    val query = startLoc +
+                            "&shop=" + shop +
+                            "&goals=" + goals.toString() +
+                            "&starttime=" + startTime
+                    Timber.d(query)
+                    mapView.loadUrl("https://asia-northeast1-navitime-challenge.cloudfunctions.net/getMap?$query")
+                }
             }
         })
 

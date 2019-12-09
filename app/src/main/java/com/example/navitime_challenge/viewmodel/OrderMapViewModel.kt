@@ -2,12 +2,8 @@ package com.example.navitime_challenge.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.navitime_challenge.domain.Order
-import com.example.navitime_challenge.repository.OrdersRepository
-import com.google.firebase.firestore.EventListener
-import com.google.firebase.firestore.QuerySnapshot
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.example.navitime_challenge.database.getRouteDatabase
+import com.example.navitime_challenge.repository.RouteRepository
 import kotlinx.coroutines.*
 
 /**
@@ -15,13 +11,11 @@ import kotlinx.coroutines.*
  */
 class OrderMapViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val ordersRepository = OrdersRepository()
+    private val routesRepository = RouteRepository(getRouteDatabase(application))
 
-    val orderList: MutableLiveData<List<Order>> = MutableLiveData()
+    val routeList = routesRepository.routes
 
     private val viewModelJob = SupervisorJob()
-
-    private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
     /**
      * Event triggered for network error. This is private to avoid exposing a
@@ -48,31 +42,6 @@ class OrderMapViewModel(application: Application) : AndroidViewModel(application
      */
     val isNetworkErrorShown: LiveData<Boolean>
         get() = _isNetworkErrorShown
-
-
-    fun getSavedOrdersFromRepository(): LiveData<List<Order>> {
-
-        viewModelScope.launch {
-            ordersRepository.getSavedOrders().addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
-                if (e != null) {
-                    //Timber.w("Listen failed.", e)
-                    orderList.value = null
-                    _eventNetworkError.value = true
-                    return@EventListener
-                }
-
-                var savedOrders: MutableList<Order> = mutableListOf()
-                for (doc in value!!) {
-                    var item = doc.toObject(Order::class.java)
-                    savedOrders.add(item)
-                }
-                orderList.value = savedOrders
-                _eventNetworkError.value = false
-                _isNetworkErrorShown.value = false
-            })
-        }
-        return orderList
-    }
 
 
     /**
