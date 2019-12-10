@@ -13,6 +13,7 @@ class OrdersRepository {
 
     fun getSavedOrders(): Query {
         return firestoreDB.collection("orders")
+            .whereGreaterThan("shop.address", "神奈川")
             .whereEqualTo("status", "0")
             .orderBy("shop.address")
             .limit(30)

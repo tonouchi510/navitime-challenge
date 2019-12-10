@@ -19,8 +19,6 @@ import com.example.navitime_challenge.viewmodel.OrderListViewModel
 
 class FragmentOrderList: Fragment(){
 
-    private val TAG = "FragmentOrderList"
-
     private val viewModel: OrderListViewModel by lazy {
         val activity = requireNotNull(this.activity) {
             "You can only access the viewModel after onActivityCreated()"

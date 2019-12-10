@@ -1,28 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".FragmentTab01" >
+    tools:context=".ui.FragmentHome">
 
-    <FrameLayout
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.navitime_challenge.viewmodel.HomeViewModel" />
+
+    </data>
+
+
+    <LinearLayout
         android:orientation="vertical"
         android:layout_gravity="center_vertical"
+        android:padding="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:text="空き時間" />
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"
+            android:text="@string/free" />
 
         <TextView
             android:id="@+id/free_time"
-            android:layout_width="wrap_content"
+            android:background="@drawable/frame_style"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:padding="8sp"
             android:textSize="20sp" />
 
-    </FrameLayout>
+        <WebView
+            android:id="@+id/shiftMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 
 </layout>
